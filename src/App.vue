@@ -1,17 +1,17 @@
 <template>
   <div id="app">
     <div>
-      <div class="app">
-        <div class="header">
-          <a href="IPlot.html"
-            ><img class="img" src="@/assets/image/iplot.png" alt="icon"
-          /></a>
+      <div class="app-style">
+        <div class="header" >
+          <a href="IPlot.html"><img class="img" src="@/assets/image/iplot.png" alt="icon"/></a>
           <nav>
-            <ul>
-              <li><button id="nav_bar_new">New</button></li>
-              <li><button id="nav_bar_open">Open</button></li>
-              <li><button id="nav_bar_save">Save</button></li>
-            </ul>
+            <div>
+              <ul>
+                <li><button id="nav_bar_new" @click="newCanvas" >New</button></li>
+                <li><button id="nav_bar_open" @click="openCanvas">Open</button></li>
+                <li><button id="nav_bar_save" @click="saveCanvas">Save</button></li>
+              </ul>
+            </div>
           </nav>
         </div>
 
@@ -50,6 +50,7 @@
           </div>
 
           <div class="plotboard">board</div>
+
 
           <div class="rightbar">
             <div class="stepbar">
@@ -93,6 +94,7 @@
                 <div class="step_button"><button id="back">Back</button></div>
                 <div class="step_button"><button id="next">Next</button></div>
               </div>
+              <div id="newdlg" v-show="flagNew"><b></b></div>
             </div>
 
             <div class="infobar">
@@ -109,6 +111,7 @@
                 Reference
                 <div id="reference_content">hello</div>
               </div>
+              <input type="text" v-model="ccc" />
             </div>
           </div>
         </div>
@@ -119,10 +122,39 @@
 
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
+import ElementUI from "element-ui";
 
 @Component({})
-export default class App extends Vue {}
+export default class App extends Vue {
+  abc = "abc";
+  ccc = "ccc";
+  flagNew = true;
+  diagram: Diagram = null;
+
+  newCanvas() {
+    alert("click");
+    console.log("abc");
+
+  }
+
+
+  m() {
+    // this.ccc
+    let aa = new Test();
+    aa.a = this.ccc;
+  }
+}
+
+class Test {
+  public a = '';
+}
+
+class Diagram {
+  name:string = "";
+  createCanvas(){}
+}
 </script>
+
 
 <style lang="scss">
 * {
@@ -147,7 +179,7 @@ body {
   background: url("./assets/image/BG.jpg") no-repeat fixed center;
 }
 
-.app {
+.app-style {
   position: absolute;
   height: 100%;
   width: 1320px;
