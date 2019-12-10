@@ -2,14 +2,20 @@
   <div id="app">
     <div>
       <div class="app-style">
-        <div class="header" >
-          <a href="IPlot.html"><img class="img" src="@/assets/image/iplot.png" alt="icon"/></a>
+        <div class="header">
+          <a href="IPlot.html"
+            ><img class="img" src="@/assets/image/iplot.png" alt="icon"
+          /></a>
           <nav>
             <div>
               <ul>
-                <li><button id="nav_bar_new" @click="newCanvas" >New</button></li>
-                <li><button id="nav_bar_open" @click="openCanvas">Open</button></li>
-                <li><button id="nav_bar_save" @click="saveCanvas">Save</button></li>
+                <li><button id="nav_bar_new"  @click.self="openDlgNew">New</button></li>
+                <li>
+                  <button id="nav_bar_open" >Open</button>
+                </li>
+                <li>
+                  <button id="nav_bar_save" >Save</button>
+                </li>
               </ul>
             </div>
           </nav>
@@ -49,7 +55,19 @@
             </div>
           </div>
 
-          <div class="plotboard">board</div>
+          <div class="plotboard" v-html="canvasEl"></div>
+
+          <el-dialog title="New a Diagram" :visible.sync="dlgNew.dlgNewVisible" >
+            <el-form>
+              <el-form-item label="Descriptin" label-width="80px">
+                <el-input autocomplete="off" v-model="dlgNew.desc" clearable ></el-input>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="closeDlgNew">cancel</el-button>
+              <el-button type="primary" @click="closeDlgAndNewCanvas">comfirm</el-button>
+            </div>
+          </el-dialog>
 
 
           <div class="rightbar">
@@ -94,7 +112,7 @@
                 <div class="step_button"><button id="back">Back</button></div>
                 <div class="step_button"><button id="next">Next</button></div>
               </div>
-              <div id="newdlg" v-show="flagNew"><b></b></div>
+<!--              <div id="newdlg" v-show="flagNew"><b></b></div>-->
             </div>
 
             <div class="infobar">
@@ -111,7 +129,6 @@
                 Reference
                 <div id="reference_content">hello</div>
               </div>
-              <input type="text" v-model="ccc" />
             </div>
           </div>
         </div>
@@ -122,39 +139,86 @@
 
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
-import ElementUI from "element-ui";
+declare var jQuery: (selector: string) => any;
+
 
 @Component({})
 export default class App extends Vue {
-  abc = "abc";
-  ccc = "ccc";
-  flagNew = true;
-  diagram: Diagram = null;
+  canvas: Canvas;
+  canvasEl: string = "";
 
-  newCanvas() {
-    alert("click");
-    console.log("abc");
-
+  dlgNew = {
+    dlgNewVisible: false,
+    desc : ""
   }
 
-
-  m() {
-    // this.ccc
-    let aa = new Test();
-    aa.a = this.ccc;
+  openDlgNew(){
+    this.dlgNew.dlgNewVisible = true;
+  }
+  closeDlgNew(){
+    this.dlgNew.dlgNewVisible = false;
+    this.dlgNew.desc = "";
+  }
+  closeDlgAndNewCanvas(){
+    this.dlgNew.dlgNewVisible = false;
+    this.canvas = new Canvas(this.dlgNew.desc);
+    // console.log(this.canvas);
+    this.canvasEl = this.canvas.createCanvas();
   }
 }
 
-class Test {
-  public a = '';
+
+class Canvas {
+  name: string;
+  constructor(name){
+    this.name = name;
+  }
+  createCanvas(){
+    let width = jQuery(".plotboard").width();
+    let height = jQuery(".plotboard").height();
+    jQuery(".plotboard").empty();
+    jQuery(".plotboard").css({"background":"#fff","opacity":"1.0"});
+    return "<canvas id='canvas' " +"width='" + width +"' height='" +height+"'></canvas>";
+  }
 }
 
-class Diagram {
-  name:string = "";
-  createCanvas(){}
+class component{
+
 }
+
+class Line{
+
+}
+
+class InterfaceLine extends Line{
+
+}
+
+class ReferenceLine extends Line{
+
+}
+
+class ConstraintLine extends Line{
+
+}
+
+class Shape{
+
+}
+
+class Machine extends Shape{
+
+}
+
+class ProblemDomain extends Shape{
+
+}
+
+class Requirement extends Shape{
+
+}
+
 </script>
-
 
 <style lang="scss">
 * {
@@ -373,5 +437,13 @@ nav ul li {
   background: white;
   margin: 2px 0;
   opacity: 0.8;
+}
+
+#dlg_new{
+  position: absolute;
+  background: #000;
+  width:300px;
+  height: 200px;
+  margin: auto;
 }
 </style>
