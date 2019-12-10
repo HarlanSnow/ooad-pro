@@ -57,9 +57,21 @@
 
           <div class="plotboard" v-html="canvasEl"></div>
 
-          <el-dialog title="New a Diagram" :visible.sync="dlgNew.dlgNewVisible" >
+          <el-dialog title="New a Diagram" :visible.sync="dlgNew.dlgNewVisible" width="30%">
             <el-form>
-              <el-form-item label="Descriptin" label-width="80px">
+              <el-form-item label="Descriptin" label-width="80px" >
+                <el-input autocomplete="off" v-model="dlgNew.desc" clearable ></el-input>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="closeDlgNew">cancel</el-button>
+              <el-button type="primary" @click="closeDlgAndNewCanvas">comfirm</el-button>
+            </div>
+          </el-dialog>
+
+          <el-dialog title="Machine Editor" :visible.sync="dlgNew.dlgNewVisible" width="30%">
+            <el-form>
+              <el-form-item label="Descriptin" label-width="80px" >
                 <el-input autocomplete="off" v-model="dlgNew.desc" clearable ></el-input>
               </el-form-item>
             </el-form>
@@ -137,10 +149,10 @@
   </div>
 </template>
 
+
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 declare var jQuery: (selector: string) => any;
-
 
 @Component({})
 export default class App extends Vue {
@@ -152,6 +164,19 @@ export default class App extends Vue {
     desc : ""
   }
 
+  mEditor = {
+    desc: "",
+    sN: ""
+  }
+  pDEditor = {
+    desc: "",
+    sN: "",
+    pp: "",
+    dT: ""
+  }
+  intEditor={
+    phe: ""
+  }
   openDlgNew(){
     this.dlgNew.dlgNewVisible = true;
   }
@@ -202,20 +227,52 @@ class ConstraintLine extends Line{
 
 }
 
-class Shape{
-
+class Shape {
+  public description: string = "";
 }
 
 class Machine extends Shape{
+  public description: string = "Machine";
+  public shortName: string = "M";
 
+  constructor(description: string, shortName: string){
+    super();
+    this.description = description;
+    this.shortName = shortName;
+  }
+  resetInfo(desc: string, shortName: string){
+    this.description = desc;
+    this.shortName = shortName;
+  }
 }
 
 class ProblemDomain extends Shape{
 
+  public description: string = "ProblemDomain";
+  public shortName: string = "PD";
+  public physicalPropety: string;
+  public domainType: string;
+
+  constructor(){
+    super();
+  }
+
+  resetInfo(desc: string, shortName: string, physicalPropety: string, domainType: string){
+    this.description = desc;
+    this.shortName = shortName;
+    this.physicalPropety = physicalPropety;
+    this.domainType = domainType;
+  }
 }
 
 class Requirement extends Shape{
-
+  constructor(description: string){
+    super();
+    this.description = description;
+  }
+  resetInfo(description: string){
+    this.description = description;
+  }
 }
 
 </script>
@@ -439,11 +496,11 @@ nav ul li {
   opacity: 0.8;
 }
 
-#dlg_new{
-  position: absolute;
-  background: #000;
-  width:300px;
-  height: 200px;
-  margin: auto;
-}
+/*#dlg_new{*/
+/*  position: absolute;*/
+/*  background: #000;*/
+/*  width:300px;*/
+/*  height: 200px;*/
+/*  margin: auto;*/
+/*}*/
 </style>
