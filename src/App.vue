@@ -3,18 +3,20 @@
     <div>
       <div class="app-style">
         <div class="header">
-          <a href="IPlot.html"
-            ><img class="img" src="@/assets/image/iplot.png" alt="icon"
+          <a href="index.html"
+            ><img class="img" src="./assets/image/iplot.png" alt="icon"
           /></a>
           <nav>
             <div>
               <ul>
-                <li><button id="nav_bar_new"  @click.self="openDlgNew">New</button></li>
                 <li>
-                  <button id="nav_bar_open" >Open</button>
+                  <button id="nav_bar_new" @click.self="openDlgNew">New</button>
                 </li>
                 <li>
-                  <button id="nav_bar_save" >Save</button>
+                  <button id="nav_bar_open">Open</button>
+                </li>
+                <li>
+                  <button id="nav_bar_save">Save</button>
                 </li>
               </ul>
             </div>
@@ -22,66 +24,42 @@
         </div>
 
         <div class="body">
+          <!--          toolbar-->
           <div class="toolbar">
             <div class="panel_box">
-              <button class="panel_item" id="machine">
-                <img src="@/assets/image/machine.png" alt="machine" />
+              <button class="panel_item" id="machine" >
+                <img src="./assets/image/machine.png" alt="machine" @click.self="addMachine" />
               </button>
             </div>
             <div class="panel_box">
               <button class="panel_item" id="problemDomain">
-                <img src="@/assets/image/problemDomain.png" alt="pD" />
+                <img src="./assets/image/problemDomain.png" alt="pD" />
               </button>
             </div>
             <div class="panel_box">
               <button class="panel_item" id="interface">
-                <img src="@/assets/image/interface.png" alt="interface" />
+                <img src="./assets/image/interface.png" alt="interface" />
               </button>
             </div>
             <div class="panel_box">
               <button class="panel_item" id="requirement">
-                <img src="@/assets/image/requirement.png" alt="requirement" />
+                <img src="./assets/image/requirement.png" alt="requirement" />
               </button>
             </div>
             <div class="panel_box">
               <button class="panel_item" id="inference">
-                <img src="@/assets/image/inference.png" alt="interface" />
+                <img src="./assets/image/inference.png" alt="interface" />
               </button>
             </div>
             <div class="panel_box">
               <button class="panel_item" id="constraint">
-                <img src="@/assets/image/constraint.png" alt="constrainst" />
+                <img src="./assets/image/constraint.png" alt="constrainst" />
               </button>
             </div>
           </div>
-
+          <!--          plotboard-->
           <div class="plotboard" v-html="canvasEl"></div>
-
-          <el-dialog title="New a Diagram" :visible.sync="dlgNew.dlgNewVisible" width="30%">
-            <el-form>
-              <el-form-item label="Descriptin" label-width="80px" >
-                <el-input autocomplete="off" v-model="dlgNew.desc" clearable ></el-input>
-              </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-              <el-button @click="closeDlgNew">cancel</el-button>
-              <el-button type="primary" @click="closeDlgAndNewCanvas">comfirm</el-button>
-            </div>
-          </el-dialog>
-
-          <el-dialog title="Machine Editor" :visible.sync="dlgNew.dlgNewVisible" width="30%">
-            <el-form>
-              <el-form-item label="Descriptin" label-width="80px" >
-                <el-input autocomplete="off" v-model="dlgNew.desc" clearable ></el-input>
-              </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-              <el-button @click="closeDlgNew">cancel</el-button>
-              <el-button type="primary" @click="closeDlgAndNewCanvas">comfirm</el-button>
-            </div>
-          </el-dialog>
-
-
+          <!--          rightbar-->
           <div class="rightbar">
             <div class="stepbar">
               <div style="text-align: center; font-size:24px; margin: 5px;">
@@ -124,7 +102,6 @@
                 <div class="step_button"><button id="back">Back</button></div>
                 <div class="step_button"><button id="next">Next</button></div>
               </div>
-<!--              <div id="newdlg" v-show="flagNew"><b></b></div>-->
             </div>
 
             <div class="infobar">
@@ -143,121 +120,334 @@
               </div>
             </div>
           </div>
+
+          <!--          click New-->
+          <el-dialog title="New a Diagram" :visible.sync="dlgNew.dlgVisible" width="25%">
+            <el-form label-position="left">
+              <el-form-item label="Description" label-width="100px">
+                <el-input autocomplete="off" v-model="dlgNew.desc" clearable></el-input>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="closeDlgNew">cancel</el-button>
+              <el-button type="primary" @click="closeDlgAndNewCanvas">confirm</el-button>
+            </div>
+          </el-dialog>
+          <!--          click machine-->
+          <el-dialog title="Machine Editor" :visible.sync="mEditor.dlgVisible" width="25%">
+            <el-form label-position="left">
+              <el-form-item label="Description" label-width="100px">
+                <el-input autocomplete="off" v-model="mEditor.desc" clearable></el-input>
+              </el-form-item>
+              <el-form-item label="ShortName" label-width="100px">
+                <el-input autocomplete="off" v-model="mEditor.sN" clearable></el-input>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="closeMEditor">cancel</el-button>
+              <el-button type="primary" @click="closeMEditorAndSave">confirm</el-button>
+            </div>
+          </el-dialog>
+          <!--          click requirement-->
+          <el-dialog title="Requirement Editor" :visible.sync="rEditor.dlgVisible" width="25%">
+            <el-form label-position="left">
+              <el-form-item label="Descriptin" label-width="100px">
+                <el-input autocomplete="off" v-model="rEditor.desc" clearable></el-input>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="closeREditor">cancel</el-button>
+              <el-button type="primary" @click="closeREditorAndSave">confirm</el-button>
+            </div>
+          </el-dialog>
+          <!--          click problem domain-->
+          <el-dialog title="Problem Domain Editor" :visible.sync="pDEditor.dlgVisible" width="25%">
+            <el-form label-position="left">
+              <el-form-item label="Description" label-width="125px">
+                <el-input autocomplete="off" v-model="pDEditor.desc" clearable></el-input>
+              </el-form-item>
+              <el-form-item label="ShortName" label-width="125px">
+                <el-input autocomplete="off" v-model="pDEditor.sN" clearable></el-input>
+              </el-form-item>
+              <el-form-item label="Physical Property" label-width="125px">
+                <el-select v-model="pDEditor.pp" placeholder="请选择">
+                  <el-option v-for="item in pDEditor.ppOption" :key="item.value" :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="Domain Type" label-width="125px">
+                <el-select v-model="pDEditor.dT" placeholder="请选择" >
+                  <el-option v-for="item in pDEditor.dTOption" :key="item.value" :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="closePDEditor">cancel</el-button>
+              <el-button type="primary" @click="closePDEditorAndSave">confirm</el-button>
+            </div>
+          </el-dialog>
+          <!--          click Interface Line-->
+          <el-dialog title="Interface Editor" :visible.sync="interfaceEditor.dlgVisible" width="25%">
+            <el-form label-position="left">
+              <el-form-item label="Initiator" label-width="125px">
+<!--                <el-select v-model="value" placeholder="请选择">-->
+<!--                  <el-option v-for="item in interfaceEditor.initiator" :key="item.value" :value="item.value">-->
+<!--                  </el-option>-->
+<!--                </el-select>-->
+              </el-form-item>
+              <el-form-item label="Phenomenon" label-width="125px">
+<!--                <el-select v-model="value" placeholder="请选择">-->
+<!--                  <el-option v-for="item in interfaceEditor.pheList" :key="item.value" :value="item.value">-->
+<!--                  </el-option>-->
+<!--                </el-select>-->
+              </el-form-item>
+              <el-form-item label="Type" label-width="125px">
+                <el-select v-model="interfaceEditor.type" placeholder="请选择">
+                  <el-option v-for="item in interfaceEditor.types" :key="item.value" :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="Phenomenon List" label-width="125px">
+<!--                <el-table :data="interfaceEditor.pheList" style="width: 100%">-->
+<!--                  <el-table-column prop="init"></el-table-column>-->
+<!--                  <el-table-column prop="phe"></el-table-column>-->
+<!--                  <el-table-column prop="type"></el-table-column>-->
+<!--                </el-table>-->
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="closePDEditor">cancel</el-button>
+              <el-button type="primary" @click="closePDEditorAndSave">confirm</el-button>
+            </div>
+          </el-dialog>
         </div>
       </div>
     </div>
   </div>
 </template>
 
+<!--<script></script>-->
 
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 declare var jQuery: (selector: string) => any;
 
+import { fabric } from "fabric";
+
 @Component({})
 export default class App extends Vue {
-  canvas: Canvas;
+  diagram: Diagram;
+  canvas:any;
   canvasEl: string = "";
-
+  // click new button
   dlgNew = {
-    dlgNewVisible: false,
-    desc : ""
+    dlgVisible: false,
+    desc: ""
+  };
+  openDlgNew() {
+    //click New
+    this.dlgNew.dlgVisible = true;
+  }
+  closeDlgNew() {
+    //cancel
+    this.dlgNew.dlgVisible = false;
+    this.dlgNew.desc = "";
+  }
+  closeDlgAndNewCanvas() {
+    //comfirm
+    this.dlgNew.dlgVisible = false;
+    this.diagram = new Diagram(this.dlgNew.desc);
+    this.canvasEl = this.diagram.createCanvas();
+    this.canvas = new fabric.Canvas("canvas");
+    console.log(this.canvas);
+    this.dlgNew.desc = "";
   }
 
+  addMachine(){
+    let rect = new fabric.Rect({
+      top : 50,
+      left : 100,
+      width : 100,
+      height : 70,
+      fill : "#000"
+    });
+    this.canvas.add(rect);
+  }
+
+  // Machine Editor Editor
   mEditor = {
+    dlgVisible: false,
     desc: "",
     sN: ""
+  };
+  openMEditor() {
+    //dblclick open
+    this.mEditor.dlgVisible = true;
   }
+  closeMEditor() {
+    //cancel
+    this.mEditor.dlgVisible = false;
+    // this.mEditor.desc = "";
+    // this.
+  }
+  closeMEditorAndSave() {
+    //comfirm
+    this.mEditor.dlgVisible = false;
+  }
+  //Problem Domain Editor
   pDEditor = {
+    dlgVisible: false,
     desc: "",
     sN: "",
     pp: "",
-    dT: ""
+    ppOption: [{
+      value: "GivenDomain"
+    },{
+      value: "DesignDomian"
+    }],
+    dT: "",
+    dTOption:[{
+      value: "Causal"
+    },{
+      value: "Biddable"
+    },{
+      value: "Lexical"
+    }]
+  };
+  openPDEditor(){
+    this.pDEditor.dlgVisible = true;
   }
-  intEditor={
-    phe: ""
+  closePDEditor(){
+    this.pDEditor.dlgVisible = false;
   }
-  openDlgNew(){
-    this.dlgNew.dlgNewVisible = true;
+  closePDEditorAndSave(){
+    this.pDEditor.dlgVisible = false;
   }
-  closeDlgNew(){
-    this.dlgNew.dlgNewVisible = false;
-    this.dlgNew.desc = "";
+  //Requirement Editor
+  rEditor = {
+    dlgVisible: false,
+    desc: ""
+  };
+  openREditor() {
+    // dblclick requirement
+    this.rEditor.dlgVisible = true;
   }
-  closeDlgAndNewCanvas(){
-    this.dlgNew.dlgNewVisible = false;
-    this.canvas = new Canvas(this.dlgNew.desc);
-    // console.log(this.canvas);
-    this.canvasEl = this.canvas.createCanvas();
+  closeREditor() {
+    //cancel
+    this.rEditor.dlgVisible = false;
+    this.rEditor.desc = "";
+  }
+  closeREditorAndSave() {
+    //comfirm
+    this.rEditor.dlgVisible = false;
+  }
+
+  type = [{
+    value: "Event"
+  },{
+    value: "State"
+  },{
+    value: "value"
+  }];
+  //interface Editor
+  interfaceEditor = {
+    dlgVisible: false,
+    initiator: "",
+    phe: "",
+    types: this.type,
+    type: "",
+    pheList:[]
+  };
+  openInterfaceEditor(){
+    this.interfaceEditor.dlgVisible = true;
+  }
+  closeInterfaceEditor(){
+    this.interfaceEditor.dlgVisible = false;
+  }
+  // reference Editor
+  referenceEditor = {
+    dlgVisible: false,
+    initiator: "",
+    receiver: "",
+    phe: "",
+    types: this.type,
+    type: "",
+    constraint: false,
+    pheList: []
+  }
+  // constraint Editor
+  constraintEditor = {
+    dlgVisible: false,
+    initiator: "",
+    receiver: "",
+    phe: "",
+    types: this.type,
+    type : "",
+    constraint: false,
+    pheList: []
   }
 }
 
-
-class Canvas {
+class Diagram {
   name: string;
-  constructor(name){
+  constructor(name) {
     this.name = name;
   }
-  createCanvas(){
+  createCanvas() {
     let width = jQuery(".plotboard").width();
     let height = jQuery(".plotboard").height();
     jQuery(".plotboard").empty();
-    jQuery(".plotboard").css({"background":"#fff","opacity":"1.0"});
-    return "<canvas id='canvas' " +"width='" + width +"' height='" +height+"'></canvas>";
+    jQuery(".plotboard").css({ background: "#fff", opacity: "1.0" });
+    return ("<canvas id='canvas' " + "width='" +  width + "' height='" + height + "'></canvas>");
   }
 }
 
-class component{
+class component {}
 
-}
+class Line {}
 
-class Line{
+class InterfaceLine extends Line {}
 
-}
+class ReferenceLine extends Line {}
 
-class InterfaceLine extends Line{
-
-}
-
-class ReferenceLine extends Line{
-
-}
-
-class ConstraintLine extends Line{
-
-}
+class ConstraintLine extends Line {}
 
 class Shape {
   public description: string = "";
 }
 
-class Machine extends Shape{
+class Machine extends Shape {
   public description: string = "Machine";
   public shortName: string = "M";
 
-  constructor(description: string, shortName: string){
+  constructor(description: string, shortName: string) {
     super();
     this.description = description;
     this.shortName = shortName;
   }
-  resetInfo(desc: string, shortName: string){
+  resetInfo(desc: string, shortName: string) {
     this.description = desc;
     this.shortName = shortName;
   }
 }
 
-class ProblemDomain extends Shape{
-
+class ProblemDomain extends Shape {
   public description: string = "ProblemDomain";
   public shortName: string = "PD";
   public physicalPropety: string;
   public domainType: string;
 
-  constructor(){
+  constructor() {
     super();
   }
 
-  resetInfo(desc: string, shortName: string, physicalPropety: string, domainType: string){
+  resetInfo(
+    desc: string,
+    shortName: string,
+    physicalPropety: string,
+    domainType: string
+  ) {
     this.description = desc;
     this.shortName = shortName;
     this.physicalPropety = physicalPropety;
@@ -265,16 +455,21 @@ class ProblemDomain extends Shape{
   }
 }
 
-class Requirement extends Shape{
-  constructor(description: string){
+class Requirement extends Shape {
+  constructor(description: string) {
     super();
     this.description = description;
   }
-  resetInfo(description: string){
+  resetInfo(description: string) {
     this.description = description;
   }
 }
 
+// interface Phenomenon{
+//   initiator: string;
+//   interaction :string;
+//   type: string;
+// }
 </script>
 
 <style lang="scss">
@@ -354,6 +549,10 @@ nav ul li {
   font-size: 18px;
   width: 80px;
   margin: 0 10px;
+}
+nav ul li button {
+  background: #d6d5b7;
+  font-size: 18px;
 }
 
 .body {
@@ -470,13 +669,14 @@ nav ul li {
   margin: 2px 0;
   /*padding: 1px;*/
 }
-.rightbar .stepbar .step_controller botton {
+.rightbar .stepbar .step_controller button {
   background: #ecad9e;
   color: #777;
+  font-size: 18px;
   /*background: #d1ba74;*/
 }
 
-.rightbar .stepbar .step_controller botton:hover {
+.rightbar .stepbar .step_controller button:hover {
   /*background: #000;*/
   color: #000;
   border: 2px solid #f4606c;
@@ -495,12 +695,4 @@ nav ul li {
   margin: 2px 0;
   opacity: 0.8;
 }
-
-/*#dlg_new{*/
-/*  position: absolute;*/
-/*  background: #000;*/
-/*  width:300px;*/
-/*  height: 200px;*/
-/*  margin: auto;*/
-/*}*/
 </style>
