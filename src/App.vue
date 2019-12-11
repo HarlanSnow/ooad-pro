@@ -58,7 +58,8 @@
             </div>
           </div>
           <!--          plotboard-->
-          <div class="plotboard" v-html="canvasEl"></div>
+<!--          <div class="plotboard" v-html="canvasEl"></div>-->
+          <div class="plotboard"></div>
           <!--          rightbar-->
           <div class="rightbar">
             <div class="stepbar">
@@ -239,7 +240,7 @@ import { fabric } from "fabric";
 export default class App extends Vue {
   diagram: Diagram;
   canvas:any;
-  canvasEl: string = "";
+  // canvasEl: string = "";
   // click new button
   dlgNew = {
     dlgVisible: false,
@@ -258,10 +259,9 @@ export default class App extends Vue {
     //comfirm
     this.dlgNew.dlgVisible = false;
     this.diagram = new Diagram(this.dlgNew.desc);
-    this.canvasEl = this.diagram.createCanvas();
-    this.canvas = new fabric.Canvas("canvas");
-    console.log(this.canvas);
+    this.diagram.createCanvas();
     this.dlgNew.desc = "";
+    this.canvas = new fabric.Canvas('canvas');
   }
 
   addMachine(){
@@ -272,6 +272,7 @@ export default class App extends Vue {
       height : 70,
       fill : "#000"
     });
+    console.log(fabric);
     this.canvas.add(rect);
   }
 
@@ -399,7 +400,8 @@ class Diagram {
     let height = jQuery(".plotboard").height();
     jQuery(".plotboard").empty();
     jQuery(".plotboard").css({ background: "#fff", opacity: "1.0" });
-    return ("<canvas id='canvas' " + "width='" +  width + "' height='" + height + "'></canvas>");
+    let text = "<canvas id='canvas' " + "width='" +  width + "' height='" + height + "'></canvas>";
+    jQuery(".plotboard").html(text);
   }
 }
 
