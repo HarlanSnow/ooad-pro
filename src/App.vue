@@ -27,82 +27,60 @@
           <!--          toolbar-->
           <div class="toolbar">
             <div class="panel_box">
-              <button class="panel_item" id="machine" >
-                <img src="./assets/image/machine.png" alt="machine" @click.self="addMachine" />
+              <button class="panel_item" id="machine">
+                <img src="./assets/image/machine.png" alt="machine" @click.self="setTool1"/>
               </button>
             </div>
             <div class="panel_box">
               <button class="panel_item" id="problemDomain">
-                <img src="./assets/image/problemDomain.png" alt="pD" />
+                <img src="./assets/image/problemDomain.png" alt="pD" @click.self="setTool2"/>
               </button>
             </div>
             <div class="panel_box">
               <button class="panel_item" id="interface">
-                <img src="./assets/image/interface.png" alt="interface" />
+                <img src="./assets/image/interface.png" alt="interface" @click.self="setTool3"/>
               </button>
             </div>
             <div class="panel_box">
               <button class="panel_item" id="requirement">
-                <img src="./assets/image/requirement.png" alt="requirement" />
+                <img src="./assets/image/requirement.png" alt="requirement" @click.self="setTool4"/>
               </button>
             </div>
             <div class="panel_box">
               <button class="panel_item" id="inference">
-                <img src="./assets/image/inference.png" alt="interface" />
+                <img src="./assets/image/inference.png" alt="interface" @click.self="setTool5"/>
               </button>
             </div>
             <div class="panel_box">
               <button class="panel_item" id="constraint">
-                <img src="./assets/image/constraint.png" alt="constrainst" />
+                <img src="./assets/image/constraint.png" alt="constrainst"  @click.self="setTool6"/>
               </button>
             </div>
           </div>
           <!--          plotboard-->
-<!--          <div class="plotboard" v-html="canvasEl"></div>-->
-          <div class="plotboard"></div>
+          <!--          <div class="plotboard" v-html="canvasEl"></div>-->
+          <div id="plotboard"></div>
           <!--          rightbar-->
           <div class="rightbar">
             <div class="stepbar">
-              <div style="text-align: center; font-size:24px; margin: 5px;">
+              <div style="text-align: center; font-size:22px; margin:3px">
                 <b>Steps</b>
               </div>
-              <div class="step1">
-                <div class="step_title">Step1: ContextDiagram</div>
-                <ul style="list-style: none;">
-                  <li><div class="step_content">1.1 Identify Machine</div></li>
-                  <li><div class="step_content">1.2 Identify Domains</div></li>
-                  <li>
-                    <div class="step_content">1.3 Identify Interactions</div>
-                  </li>
-                  <li>
-                    <div id="check_cD" class="step_content">
-                      1.4 Check Context Diagram
-                    </div>
-                  </li>
-                </ul>
+              <div style="height: 225px">
+                <el-steps direction="vertical" :active="step_active" space="24px">
+                  Step1: ContextDiagram
+                  <el-step title="1.1 Identify Machine"></el-step>
+                  <el-step title="1.2 Identify Domains"></el-step>
+                  <el-step title="1.3 Identify Interactions"></el-step>
+                  <el-step title="1.4 Check Context "></el-step>
+                  Step2: ProblemDiagram
+                  <el-step title="2.1 Identify Requirement"></el-step>
+                  <el-step title="2.2 Identify References"></el-step>
+                  <el-step title="2.3 Check Problem"></el-step>
+                </el-steps>
               </div>
-
-              <div class="step2">
-                <div class="step_title">Step2: ProblemDiagram</div>
-                <ul style="list-style: none;">
-                  <li>
-                    <div class="step_content">2.1 Identify Requirement</div>
-                  </li>
-                  <li>
-                    <div class="step_content">2.2 Identify references</div>
-                  </li>
-                  <li>
-                    <div id="check_pD" class="step_content">
-                      2.3 Check Problem Diagram
-                    </div>
-                  </li>
-                </ul>
-              </div>
-
-              <div class="step_controller">
-                <div class="step_button"><button id="back">Back</button></div>
-                <div class="step_button"><button id="next">Next</button></div>
-              </div>
+              <el-button style="margin-top: auto; float:left" @click="stepBack">back</el-button>
+              <el-button style="margin-top: auto; float:right" @click="stepNext">next</el-button>
             </div>
 
             <div class="infobar">
@@ -172,12 +150,11 @@
               </el-form-item>
               <el-form-item label="Physical Property" label-width="125px">
                 <el-select v-model="pDEditor.pp" placeholder="请选择">
-                  <el-option v-for="item in pDEditor.ppOption" :key="item.value" :value="item.value">
-                  </el-option>
+                  <el-option v-for="item in pDEditor.ppOption" :key="item.value" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="Domain Type" label-width="125px">
-                <el-select v-model="pDEditor.dT" placeholder="请选择" >
+                <el-select v-model="pDEditor.dT" placeholder="请选择">
                   <el-option v-for="item in pDEditor.dTOption" :key="item.value" :value="item.value">
                   </el-option>
                 </el-select>
@@ -188,20 +165,22 @@
               <el-button type="primary" @click="closePDEditorAndSave">confirm</el-button>
             </div>
           </el-dialog>
+
+
           <!--          click Interface Line-->
           <el-dialog title="Interface Editor" :visible.sync="interfaceEditor.dlgVisible" width="25%">
             <el-form label-position="left">
               <el-form-item label="Initiator" label-width="125px">
-<!--                <el-select v-model="value" placeholder="请选择">-->
-<!--                  <el-option v-for="item in interfaceEditor.initiator" :key="item.value" :value="item.value">-->
-<!--                  </el-option>-->
-<!--                </el-select>-->
+                <!--                <el-select v-model="value" placeholder="请选择">-->
+                <!--                  <el-option v-for="item in interfaceEditor.initiator" :key="item.value" :value="item.value">-->
+                <!--                  </el-option>-->
+                <!--                </el-select>-->
               </el-form-item>
               <el-form-item label="Phenomenon" label-width="125px">
-<!--                <el-select v-model="value" placeholder="请选择">-->
-<!--                  <el-option v-for="item in interfaceEditor.pheList" :key="item.value" :value="item.value">-->
-<!--                  </el-option>-->
-<!--                </el-select>-->
+                <!--                <el-select v-model="value" placeholder="请选择">-->
+                <!--                  <el-option v-for="item in interfaceEditor.pheList" :key="item.value" :value="item.value">-->
+                <!--                  </el-option>-->
+                <!--                </el-select>-->
               </el-form-item>
               <el-form-item label="Type" label-width="125px">
                 <el-select v-model="interfaceEditor.type" placeholder="请选择">
@@ -210,11 +189,11 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="Phenomenon List" label-width="125px">
-<!--                <el-table :data="interfaceEditor.pheList" style="width: 100%">-->
-<!--                  <el-table-column prop="init"></el-table-column>-->
-<!--                  <el-table-column prop="phe"></el-table-column>-->
-<!--                  <el-table-column prop="type"></el-table-column>-->
-<!--                </el-table>-->
+                <!--                <el-table :data="interfaceEditor.pheList" style="width: 100%">-->
+                <!--                  <el-table-column prop="init"></el-table-column>-->
+                <!--                  <el-table-column prop="phe"></el-table-column>-->
+                <!--                  <el-table-column prop="type"></el-table-column>-->
+                <!--                </el-table>-->
               </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -222,30 +201,160 @@
               <el-button type="primary" @click="closePDEditorAndSave">confirm</el-button>
             </div>
           </el-dialog>
+
+
+
+
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<!--<script></script>-->
-
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
-declare var jQuery: (selector: string) => any;
+import $ from "jquery";
+import Hammer from "hammerjs";
 
 import { fabric } from "fabric";
 
-@Component({})
+// var tool_num:number = 0;
+
+@Component({
+  mounted(): void {
+    // let hammertime = new Hammer(document.getElementById("plotboard"));
+    // hammertime.on("tap", e => console.log(e));
+  }
+})
 export default class App extends Vue {
+  tool_num = 0;
   diagram: Diagram;
-  canvas:any;
-  // canvasEl: string = "";
+  canvas: any;
+  step_active = -1;
+  machineDisabled = false;
+  machine: Machine;
+  problemDomain = 1;
+  requirementDisabled = false;
+  problemDomains = new Array<ProblemDomain>();
+  //button 是否可用
+  btn = {
+    machine: false,
+    problemDomain: false,
+    interfaceLine: false,
+    requirement: false,
+    inferenceLine: false,
+    constraint: false
+  }
+  isContextCompleted = false;
+
   // click new button
   dlgNew = {
     dlgVisible: false,
     desc: ""
   };
+
+  type = [
+    {
+      value: "Event"
+    },
+    {
+      value: "State"
+    },
+    {
+      value: "value"
+    }
+  ];
+
+  mEditor = {
+    dlgVisible: false,
+    desc: "",
+    sN: ""
+  };
+
+  pDEditor = {
+    dlgVisible: false,
+    desc: "",
+    sN: "",
+    pp: "",
+    ppOption: [
+      {
+        value: "GivenDomain"
+      },
+      {
+        value: "DesignDomian"
+      }
+    ],
+    dT: "",
+    dTOption: [
+      {
+        value: "Causal"
+      },
+      {
+        value: "Biddable"
+      },
+      {
+        value: "Lexical"
+      }
+    ]
+  };
+
+  rEditor = {
+    dlgVisible: false,
+    desc: ""
+  };
+
+  interfaceEditor = {
+    name: "",
+    dlgVisible: false,
+    initiator: "",
+    receiver: "",
+    phe: "",
+    type: "",
+    pheList: []
+  };
+
+  referenceEditor = {
+    name: "",
+    dlgVisible: false,
+    initiator: "",
+    receiver: "",
+    phe: "",
+    type: "",
+    constraint: false,
+    pheList: []
+  };
+
+  constraintEditor = {
+    name: "",
+    dlgVisible: false,
+    initiator: "",
+    receiver: "",
+    phe: "",
+    type: "",
+    constraint: false,
+    pheList: []
+  };
+
+  setTool1(){
+    this.tool_num = 1;
+  }
+  setTool2(){
+    this.tool_num = 2;
+  }
+  setTool3(){
+    this.tool_num = 3;
+  }
+  setTool4(){
+   this.tool_num = 4;
+  }
+  setTool5(){
+    this.tool_num = 5;
+  }
+  setTool6(){
+    this.tool_num = 6;
+  }
+
+
   openDlgNew() {
     //click New
     this.dlgNew.dlgVisible = true;
@@ -261,27 +370,69 @@ export default class App extends Vue {
     this.diagram = new Diagram(this.dlgNew.desc);
     this.diagram.createCanvas();
     this.dlgNew.desc = "";
-    this.canvas = new fabric.Canvas('canvas');
+    this.canvas = new fabric.Canvas("canvas");
+    var func = function (options) {
+      console.log(this.tool_num);
+      switch(this.tool_num){
+        case 0 : return;
+        case 1 : this.addMachine(options.e.offsetX, options.e.offsetY); break;
+        case 2 : this.addProblemDomain(options.e.offsetX, options.e.offsetY); break;
+
+        case 4 : this.addRequirement(options.e.offsetX, options.e.offsetY); break;
+      }
+      this.tool_num = 0;
+    }.bind(this);
+
+    this.canvas.on('mouse:down', func);
   }
 
-  addMachine(){
-    let rect = new fabric.Rect({
-      top : 50,
-      left : 100,
-      width : 100,
-      height : 70,
-      fill : "#000"
-    });
-    console.log(fabric);
-    this.canvas.add(rect);
+  addMachine( x, y) {
+    if(this.btn.machine){
+      if (!this.machineDisabled) {
+        this.machine = new Machine(x, y);
+        this.machine.draw(this.canvas);
+        this.machineDisabled = true;
+      }
+    }
   }
+  addProblemDomain(x, y) {
+    if(this.btn.problemDomain){
+
+      let pD = new ProblemDomain(x, y);
+      this.problemDomains.push(pD);
+      pD.draw(this.canvas);
+    }
+  }
+  addRequirement(x ,y) {
+    if(this.btn.requirement){
+      if (!this.requirementDisabled) {
+        let rqm = new Requirement(x ,y);
+        rqm.draw(this.canvas);
+        this.requirementDisabled = true;
+      }
+    }
+  }
+
+
+  //add Line
+  addInterfaceLine(){
+    if(this.btn.interfaceLine){
+      alert(3)
+    }
+  }
+  addInference(){
+    if(this.btn.inferenceLine){
+      alert(6)
+    }
+  }
+  addConstraint(){
+    if(this.btn.constraint){
+      alert(6)
+    }
+  }
+
 
   // Machine Editor Editor
-  mEditor = {
-    dlgVisible: false,
-    desc: "",
-    sN: ""
-  };
   openMEditor() {
     //dblclick open
     this.mEditor.dlgVisible = true;
@@ -295,41 +446,22 @@ export default class App extends Vue {
   closeMEditorAndSave() {
     //comfirm
     this.mEditor.dlgVisible = false;
+    this.machine.description = this.mEditor.desc;
+    this.machine.shortName = this.mEditor.sN;
   }
+
   //Problem Domain Editor
-  pDEditor = {
-    dlgVisible: false,
-    desc: "",
-    sN: "",
-    pp: "",
-    ppOption: [{
-      value: "GivenDomain"
-    },{
-      value: "DesignDomian"
-    }],
-    dT: "",
-    dTOption:[{
-      value: "Causal"
-    },{
-      value: "Biddable"
-    },{
-      value: "Lexical"
-    }]
-  };
-  openPDEditor(){
+  openPDEditor() {
     this.pDEditor.dlgVisible = true;
   }
-  closePDEditor(){
+  closePDEditor() {
     this.pDEditor.dlgVisible = false;
   }
-  closePDEditorAndSave(){
+  closePDEditorAndSave() {
     this.pDEditor.dlgVisible = false;
   }
+
   //Requirement Editor
-  rEditor = {
-    dlgVisible: false,
-    desc: ""
-  };
   openREditor() {
     // dblclick requirement
     this.rEditor.dlgVisible = true;
@@ -344,49 +476,59 @@ export default class App extends Vue {
     this.rEditor.dlgVisible = false;
   }
 
-  type = [{
-    value: "Event"
-  },{
-    value: "State"
-  },{
-    value: "value"
-  }];
+
   //interface Editor
-  interfaceEditor = {
-    dlgVisible: false,
-    initiator: "",
-    phe: "",
-    types: this.type,
-    type: "",
-    pheList:[]
-  };
-  openInterfaceEditor(){
+  openInterfaceEditor() {
     this.interfaceEditor.dlgVisible = true;
   }
-  closeInterfaceEditor(){
+  closeInterfaceEditor() {
     this.interfaceEditor.dlgVisible = false;
   }
+
   // reference Editor
-  referenceEditor = {
-    dlgVisible: false,
-    initiator: "",
-    receiver: "",
-    phe: "",
-    types: this.type,
-    type: "",
-    constraint: false,
-    pheList: []
-  }
+
   // constraint Editor
-  constraintEditor = {
-    dlgVisible: false,
-    initiator: "",
-    receiver: "",
-    phe: "",
-    types: this.type,
-    type : "",
-    constraint: false,
-    pheList: []
+
+
+  stepBack() {
+    if (this.step_active > -1) {
+      switch(this.step_active){
+        case 6: this.btn.constraint = true; this.btn.inferenceLine = true; break;
+        case 5: this.btn.constraint = false; this.btn.inferenceLine = false; this.btn.requirement = true; break;
+        case 4: this.btn.requirement = false; break;
+        case 3: this.btn.interfaceLine = true; break;
+        case 2: this.btn.interfaceLine = false; this.btn.problemDomain = true; break;
+        case 1: this.btn.problemDomain = false; this.btn.machine = true; break;
+        case 0: this.btn.machine = false; break;
+      }
+      this.step_active--;
+    }
+  }
+  stepNext() {
+    if (this.step_active < 3) {
+      this.step_active++;
+      switch (this.step_active) {
+        case 0: this.btn.machine = true; break;
+        case 1: this.btn.machine = false; this.btn.problemDomain= true; break;
+        case 2: this.btn.problemDomain = false; this.btn.interfaceLine = true; break;
+        case 3: this.btn.interfaceLine = false; this.checkContext(); break;
+      }
+    }else if(this.isContextCompleted && this.step_active < 6){
+      this.step_active++;
+      switch (this.step_active) {
+        case 4: this.btn.interfaceLine = false; this.btn.requirement = true; break;
+        case 5: this.btn.requirement = false; this.btn.constraint = true; this.btn.inferenceLine = true; break;
+        case 6: this.btn.constraint = false; this.btn.inferenceLine = false; this.checkProblem(); break;
+      }
+
+    }
+  }
+
+  checkContext(){
+    this.isContextCompleted = true;
+  }
+  checkProblem(){
+
   }
 }
 
@@ -396,41 +538,86 @@ class Diagram {
     this.name = name;
   }
   createCanvas() {
-    let width = jQuery(".plotboard").width();
-    let height = jQuery(".plotboard").height();
-    jQuery(".plotboard").empty();
-    jQuery(".plotboard").css({ background: "#fff", opacity: "1.0" });
-    let text = "<canvas id='canvas' " + "width='" +  width + "' height='" + height + "'></canvas>";
-    jQuery(".plotboard").html(text);
+    let width = $("#plotboard").width();
+    let height = $("#plotboard").height();
+    $("#plotboard").empty();
+    $("#plotboard").css({ background: "#fff", opacity: "1.0" });
+    let text = "<canvas id='canvas' " + "width='" + width + "' height='" + height + "'></canvas>";
+    $("#plotboard").html(text);
   }
 }
 
-class component {}
+class CanvasComponent {
 
-class Line {}
+}
 
-class InterfaceLine extends Line {}
-
-class ReferenceLine extends Line {}
-
-class ConstraintLine extends Line {}
-
-class Shape {
+class Shape extends CanvasComponent {
   public description: string = "";
+
+  constructor() {
+    super();
+  }
 }
 
 class Machine extends Shape {
   public description: string = "Machine";
   public shortName: string = "M";
+  public  machine: fabric.Group;
+  public left: number;
+  public top: number;
+  public width: number = 0;
+  public height: number = 0;
 
-  constructor(description: string, shortName: string) {
+
+  constructor(x, y) {
     super();
-    this.description = description;
-    this.shortName = shortName;
+    this.left = x;
+    this.top = y;
   }
   resetInfo(desc: string, shortName: string) {
     this.description = desc;
     this.shortName = shortName;
+  }
+  createGroup() {
+    let rect = new fabric.Rect({
+      fill: "#ccc",
+      width: 150,
+      height: 70,
+      strokeWidth: 3,
+      stroke: "black"
+    });
+    let rect2 = new fabric.Rect({
+      fill: "#ccc",
+      left: 10,
+      width: 10,
+      height: 70,
+      strokeWidth: 3,
+      stroke: "black"
+    })
+    let text = new fabric.Text(this.description + "\n(" + this.shortName +")",{
+      fontSize: 16,
+      top: 20,
+      left: 30,
+      fill: "black",
+      strokeWidth: 2,
+      textAlign: "center"
+    })
+    this.machine = new fabric.Group([rect,rect2,text],{
+      top: this.top,
+      left:this.left
+    });
+    let func = function () {
+      this.left = this.machine.left;
+      this.top = this.machine.top;
+      // console.log(this.left, this.top);
+    }.bind(this);
+    this.machine.on("moving", func);
+
+  }
+  draw(canvas) {
+    this.createGroup();
+    canvas.add(this.machine);
+    canvas.renderAll();
   }
 }
 
@@ -439,9 +626,14 @@ class ProblemDomain extends Shape {
   public shortName: string = "PD";
   public physicalPropety: string;
   public domainType: string;
+  public left;
+  public top;
+  public problemDomain: fabric.Group;
 
-  constructor() {
+  constructor(x, y) {
     super();
+    this.left = x;
+    this.top = y;
   }
 
   resetInfo(
@@ -455,23 +647,266 @@ class ProblemDomain extends Shape {
     this.physicalPropety = physicalPropety;
     this.domainType = domainType;
   }
+  createGroup() {
+    let rect = new fabric.Rect({
+      fill: "#ccc",
+      width: 150,
+      height: 70,
+      strokeWidth: 3,
+      stroke: "black"
+    });
+    // let rect2 = new fabric.Rect({
+    //   fill: "#ccc",
+    //   left: 10,
+    //   width: 10,
+    //   height: 70,
+    //   strokeWidth: 3,
+    //   stroke: "black"
+    // })
+    let text = new fabric.Text(this.description + "\n(" + this.shortName +")",{
+      fontSize: 16,
+      top: 20,
+      left: 20,
+      fill: "black",
+      strokeWidth: 2,
+      textAlign: "center"
+    })
+    this.problemDomain = new fabric.Group([rect,text],{
+      top: this.top,
+      left:this.left
+    });
+    let func = function () {
+      this.left = this.problemDomain.left;
+      this.top = this.problemDomain.top;
+      // console.log(this.left, this.top);
+    }.bind(this);
+    this.problemDomain.on("moving", func);
+  }
+
+  draw(canvas) {
+    this.createGroup();
+    canvas.add(this.problemDomain);
+    canvas.renderAll();
+  }
 }
 
 class Requirement extends Shape {
-  constructor(description: string) {
+  public description = "Requirement";
+  public left = 0;
+  public top = 0;
+  requirement :fabric.Group;
+  constructor(x ,y) {
     super();
-    this.description = description;
+    this.left = x;
+    this.top = y;
   }
   resetInfo(description: string) {
     this.description = description;
   }
+  createGroup(){
+    let ellipse = new fabric.Ellipse({
+
+      fill: "#ccc",
+      originX: "center",
+      originY: "center",
+      rx: 75,
+      ry: 35,
+      strokeDashArray: [5, 5],
+      strokeWidth: 6,
+      stroke: "black"
+    });
+    let text = new fabric.Text(this.description, {
+      fontSize: 16,
+      fill: "black",
+      originX: "center",
+      originY: "center",
+      strokeWidth: 2,
+    });
+    this.requirement = new fabric.Group([ellipse, text],{
+      top: this.top,
+      left: this.left
+    });
+    let func = function () {
+      this.left = this.requirement.left;
+      this.top = this.requirement.top;
+      // console.log(this.left, this.top);
+    }.bind(this);
+    this.requirement.on("moving", func);
+  }
+
+  // 18px的字宽为13
+  draw(canvas) {
+    this.createGroup();
+    canvas.add(this.requirement);
+    canvas.renderAll();
+  }
 }
 
-// interface Phenomenon{
-//   initiator: string;
-//   interaction :string;
-//   type: string;
-// }
+function drawArrowBase (fromX, fromY, toX, toY, theta, headlen) {
+  theta = typeof theta !== 'undefined' ? theta : 30;
+  headlen = typeof theta !== 'undefined' ? headlen : 10;
+  // 计算各角度和对应的P2,P3坐标
+  let angle = (Math.atan2(fromY - toY, fromX - toX) * 180) / Math.PI,
+          angle1 = ((angle + theta) * Math.PI) / 180,
+          angle2 = ((angle - theta) * Math.PI) / 180,
+          topX = headlen * Math.cos(angle1),
+          topY = headlen * Math.sin(angle1),
+          botX = headlen * Math.cos(angle2),
+          botY = headlen * Math.sin(angle2);
+  let arrowX = fromX - topX,
+          arrowY = fromY - topY;
+  let path = ' M ' + fromX + ' ' + fromY;
+  path += ' L ' + toX + ' ' + toY;
+  arrowX = toX + topX;
+  arrowY = toY + topY;
+  path += ' M ' + arrowX + ' ' + arrowY;
+  path += ' L ' + toX + ' ' + toY;
+  arrowX = toX + botX;
+  arrowY = toY + botY;
+  path += ' L ' + arrowX + ' ' + arrowY;
+  return path;
+}
+
+class Line extends CanvasComponent {
+  public src;
+  public des;
+  public init;
+  public rec;
+  public typeName = "Event";
+  public phe;
+  public pheList = [];
+  public x1 = 0;
+  public y1 = 0;
+  public x2 = 0;
+  public y2 = 0;
+  public name = "";
+}
+
+class InterfaceLine extends Line {
+  draw(canvas){
+    let x1 = this.src.left + 75;
+    let y1 = this.src.top + 35;
+    let x2 = this.des.left + 75;
+    let y2 = this.des.top + 35;
+    this.x1 = x1;
+    this.y1 = y1;
+    this.x2 = x2;
+    this.y2 = y2;
+    let line = new fabric.Line([x1,y1,x2,y2],{
+      fill:"black",
+      stroke:"black",
+      strokeWidth:2,
+      //preserveObjectStacking:true,
+      selectable:false,
+    });
+    let text = new fabric.Text(this.name,{
+      fontSize: 16,
+      left: (x1+x2)/2,
+      top: (y1+y2)/2,
+      originX: 'center',
+      originY: 'center',
+      //preserveObjectStacking:true,
+    });
+    let group = new fabric.Group([line, text], {
+      //preserveObjectStacking:true,
+      selectable: false
+    });
+    canvas.add(group);
+    group.sendToBack();
+    canvas.renderAll();
+  }
+}
+
+class ReferenceLine extends Line {
+  public cons = false;
+  constructor() {
+    super();
+  }
+  draw(canvas)
+  {
+    let x1 = this.src.left + 75;
+    let y1 = this.src.top + 35;
+    let x2 = this.des.left + 75;
+    let y2 = this.des.top + 35;
+    this.x1 = x1;
+    this.y1 = y1;
+    this.x2 = x2;
+    this.y2 = y2;
+    let line = new fabric.Line([x1,y1,x2,y2],{
+      fill:"black",
+      stroke:"black",
+      strokeWidth:2,
+      //preserveObjectStacking:true,
+      selectable:false,
+      strokeDashArray:[10,5],
+    });
+    let text = new fabric.Text(this.name,{
+      fontSize: 16,
+      left: (x1+x2)/2,
+      top: (y1+y2)/2,
+      originX: 'center',
+      originY: 'center',
+      //preserveObjectStacking:true,
+    });
+    let group = new fabric.Group([line, text], {
+      //preserveObjectStacking:true,
+      selectable: false
+    });
+    canvas.add(group);
+    group.sendToBack();
+    canvas.renderAll();
+  }
+}
+
+class ConstraintLine extends Line {
+  public cons = false;
+
+  draw(canvas)
+  {
+    let x1 = this.src.left + 75;
+    let y1 = this.src.top + 35;
+    let x2 = this.des.left + 75;
+    let y2 = this.des.top + 35;
+    if(x1 > x2){x2 = x2 + 75;}
+    else{x2 = x2 - 75;}
+    if(y1 > y2){y2 = y2 + 35;}
+    else{y2 = y2 - 35;}
+    this.x1 = x1;
+    this.y1 = y1;
+    this.x2 = x2;
+    this.y2 = y2;
+    let theta = 20;
+    let healen = 20;
+    let line = new fabric.Path(drawArrowBase(x1,y1,x2,y2,theta,healen),{
+      fill:"black",
+      stroke:"black",
+      strokeWidth:2,
+      //preserveObjectStacking:true,
+      selectable:false,
+      strokeDashArray:[10,5],
+      // x1:x1,
+      // y1:y1,
+      // x2:x2,
+      // y2:y2,
+    });
+    let text = new fabric.Text(this.name,{
+      fontSize: 16,
+      left: (x1+x2)/2,
+      top: (y1+y2)/2,
+      originX: 'center',
+      originY: 'center',
+      //preserveObjectStacking:true,
+    });
+    let group = new fabric.Group([line, text], {
+      //preserveObjectStacking:true,
+      selectable: false
+    });
+    canvas.add(group);
+    group.sendToBack();
+    canvas.renderAll();
+  }
+}
+
 </script>
 
 <style lang="scss">
@@ -607,7 +1042,7 @@ nav ul li button {
 }
 
 /*中间绘图板*/
-.plotboard {
+#plotboard {
   background: #fff;
   float: left;
   width: 1000px;
@@ -618,10 +1053,10 @@ nav ul li button {
   overflow: scroll;
 }
 
-.plotboard .canvas {
-  background: #fff;
-  opacity: 1;
-}
+/*#plotboard .canvas {*/
+/*  background: #fff;*/
+/*  opacity: 1;*/
+/*}*/
 
 .rightbar {
   position: relative;
@@ -650,18 +1085,19 @@ nav ul li button {
   margin: 3px;
 }
 
-.rightbar .stepbar .step_content {
-  height: 20px;
-  mangin: 2px 0;
-  color: #808080;
-}
+/*.rightbar .stepbar .step_content {*/
+/*  height: 20px;*/
+/*  mangin: 2px 0;*/
+/*  color: #000000;*/
 
-.rightbar .stepbar .step_controller {
-  margin: 10px 0;
-  /*float: right;*/
-  font-size: 20px;
-  text-align: center;
-}
+/*}*/
+
+/*.rightbar .stepbar .step_controller {*/
+/*  margin: 10px 0;*/
+/*  !*float: right;*!*/
+/*  font-size: 20px;*/
+/*  text-align: center;*/
+/*}*/
 
 .rightbar .stepbar .step_controller .step_button {
   position: relative;
