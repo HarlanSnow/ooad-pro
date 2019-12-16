@@ -13,7 +13,7 @@
                   <button id="nav_bar_new" @click.self="openDlgNew">New</button>
                 </li>
                 <li>
-                  <button id="nav_bar_open">Open</button>
+                  <button id="nav_bar_open" >Open</button>
                 </li>
                 <li>
                   <button id="nav_bar_save">Save</button>
@@ -47,8 +47,8 @@
               </button>
             </div>
             <div class="panel_box">
-              <button class="panel_item" id="inference">
-                <img src="./assets/image/inference.png" alt="interface" @click.self="setTool5"/>
+              <button class="panel_item" id="reference">
+                <img src="./assets/image/reference.png" alt="interface" @click.self="setTool5"/>
               </button>
             </div>
             <div class="panel_box">
@@ -68,12 +68,12 @@
               </div>
               <div style="height: 225px">
                 <el-steps direction="vertical" :active="step_active" space="24px">
-                  Step1: ContextDiagram
+                  <b>Step1: ContextDiagram</b>
                   <el-step title="1.1 Identify Machine"></el-step>
                   <el-step title="1.2 Identify Domains"></el-step>
                   <el-step title="1.3 Identify Interactions"></el-step>
                   <el-step title="1.4 Check Context "></el-step>
-                  Step2: ProblemDiagram
+                  <b>Step2: ProblemDiagram</b>
                   <el-step title="2.1 Identify Requirement"></el-step>
                   <el-step title="2.2 Identify References"></el-step>
                   <el-step title="2.3 Check Problem"></el-step>
@@ -85,17 +85,17 @@
 
             <div class="infobar">
               info
-              <div class="info_content" id="phenomenon">
+              <div class="info_content" id="phenomenoninfo">
                 Phenomenon
-                <div id="phenomenon_content">hello</div>
+                <div id="phenomenon_content"></div>
               </div>
-              <div class="info_content" id="interaction">
+              <div class="info_content" id="interactioninfo">
                 Interaction
-                <div id="interaction_content">hello</div>
+                <div id="interaction_content"></div>
               </div>
-              <div class="info_content" id="reference">
+              <div class="info_content" id="referenceinfo">
                 Reference
-                <div id="reference_content">hello</div>
+                <div id="reference_content"></div>
               </div>
             </div>
           </div>
@@ -130,8 +130,11 @@
           <!--          click requirement-->
           <el-dialog title="Requirement Editor" :visible.sync="rEditor.dlgVisible" width="25%">
             <el-form label-position="left">
-              <el-form-item label="Descriptin" label-width="100px">
+              <el-form-item label="Description" label-width="100px">
                 <el-input autocomplete="off" v-model="rEditor.desc" clearable></el-input>
+              </el-form-item>
+              <el-form-item label="ShortName" label-width="100px">
+                <el-input autocomplete="off" v-model="rEditor.sN" clearable></el-input>
               </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -168,42 +171,148 @@
 
 
           <!--          click Interface Line-->
-          <el-dialog title="Interface Editor" :visible.sync="interfaceEditor.dlgVisible" width="25%">
+          <el-dialog title="Interface Editor" :visible.sync="interfaceEditor.dlgVisible" width="30%">
             <el-form label-position="left">
+
               <el-form-item label="Initiator" label-width="125px">
-                <!--                <el-select v-model="value" placeholder="请选择">-->
-                <!--                  <el-option v-for="item in interfaceEditor.initiator" :key="item.value" :value="item.value">-->
-                <!--                  </el-option>-->
-                <!--                </el-select>-->
-              </el-form-item>
-              <el-form-item label="Phenomenon" label-width="125px">
-                <!--                <el-select v-model="value" placeholder="请选择">-->
-                <!--                  <el-option v-for="item in interfaceEditor.pheList" :key="item.value" :value="item.value">-->
-                <!--                  </el-option>-->
-                <!--                </el-select>-->
-              </el-form-item>
-              <el-form-item label="Type" label-width="125px">
-                <el-select v-model="interfaceEditor.type" placeholder="请选择">
-                  <el-option v-for="item in interfaceEditor.types" :key="item.value" :value="item.value">
+                <el-select v-model="interfaceEditor.initiator" placeholder="请选择">
+                  <el-option
+                          v-for="item in options1"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value">
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="Phenomenon List" label-width="125px">
-                <!--                <el-table :data="interfaceEditor.pheList" style="width: 100%">-->
-                <!--                  <el-table-column prop="init"></el-table-column>-->
-                <!--                  <el-table-column prop="phe"></el-table-column>-->
-                <!--                  <el-table-column prop="type"></el-table-column>-->
-                <!--                </el-table>-->
+              <el-form-item label="Receiver" label-width="125px">
+                <el-select v-model="interfaceEditor.receiver" placeholder="请选择">
+                  <el-option
+                          v-for="item in options1"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="Phenomenon" label-width="125px">
+                <el-input v-model="interfaceEditor.phe"></el-input>
+              </el-form-item>
+              <el-form-item label="Type" label-width="125px">
+                <el-select v-model="interfaceEditor.type" placeholder="请选择">
+                  <el-option v-for="item in Types" :key="item.value" :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="PhenomenonList" label-width="125px">
+                <el-card class="box-card">
+                  <div v-for="o in interfaceEditor.pheList" :key="o">
+                    {{ o }}
+                  </div>
+                </el-card>
               </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-              <el-button @click="closePDEditor">cancel</el-button>
-              <el-button type="primary" @click="closePDEditorAndSave">confirm</el-button>
+              <el-button @click="closeInterfaceEditor">cancel</el-button>
+              <el-button type="warning" @click="add1">Add</el-button>
+              <el-button type="primary" @click="closeInterfaceAndSave">confirm</el-button>
+            </div>
+          </el-dialog>
+
+          <!--          click Reference Line-->
+          <el-dialog title="Reference Editor" :visible.sync="referenceEditor.dlgVisible" width="30%">
+            <el-form label-position="left">
+
+              <el-form-item label="Initiator" label-width="125px">
+                <el-select v-model="referenceEditor.initiator" placeholder="请选择">
+                  <el-option
+                          v-for="item in options2"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="Receiver" label-width="125px">
+                <el-select v-model="referenceEditor.receiver" placeholder="请选择">
+                  <el-option
+                          v-for="item in options2"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="Phenomenon" label-width="125px">
+                <el-input v-model="referenceEditor.phe"></el-input>
+              </el-form-item>
+              <el-form-item label="Type" label-width="125px">
+                <el-select v-model="referenceEditor.type" placeholder="请选择">
+                  <el-option v-for="item in Types" :key="item.value" :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="PhenomenonList">
+                <el-card class="box-card">
+                  <div v-for="o in referenceEditor.pheList" :key="o">
+                    {{ o }}
+                  </div>
+                </el-card>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="closeReferenceEditor">cancel</el-button>
+              <el-button type="warning" @click="add2">Add</el-button>
+              <el-button type="primary" @click="closeReferenceAndSave">confirm</el-button>
             </div>
           </el-dialog>
 
 
+          <el-dialog title="Constraint Editor" :visible.sync="constraintEditor.dlgVisible" width="30%">
+            <el-form label-position="left">
 
+              <el-form-item label="Initiator" label-width="125px">
+                <el-select v-model="constraintEditor.initiator" placeholder="请选择">
+                  <el-option
+                          v-for="item in options3"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="Receiver" label-width="125px">
+                <el-select v-model="referenceEditor.receiver" placeholder="请选择">
+                  <el-option
+                          v-for="item in options3"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="Phenomenon" label-width="125px">
+                <el-input v-model="constraintEditor.phe"></el-input>
+              </el-form-item>
+              <el-form-item label="Type" label-width="125px">
+                <el-select v-model="constraintEditor.type" placeholder="请选择">
+                  <el-option v-for="item in Types" :key="item.value" :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="PhenomenonList" label-width="125px">
+                <el-card class="box-card" >
+                  <div v-for="o in constraintEditor.pheList" :key="o" style="overflow: scroll">
+                    {{ o }}
+                  </div>
+                </el-card>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="closeConstraintEditor">cancel</el-button>
+              <el-button type="warning" @click="add3">Add</el-button>
+              <el-button type="primary" @click="closeConstraintAndSave">confirm</el-button>
+            </div>
+          </el-dialog>
 
         </div>
       </div>
@@ -214,11 +323,9 @@
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 import $ from "jquery";
-import Hammer from "hammerjs";
-
 import { fabric } from "fabric";
+// import Hammer from "hammerjs";
 
-// var tool_num:number = 0;
 
 @Component({
   mounted(): void {
@@ -230,19 +337,24 @@ export default class App extends Vue {
   tool_num = 0;
   diagram: Diagram;
   canvas: any;
+  canvasObj: Canvas;
   step_active = -1;
   machineDisabled = false;
   machine: Machine;
   problemDomain = 1;
   requirementDisabled = false;
   problemDomains = new Array<ProblemDomain>();
+  src: Shape;
+  des: Shape;
+  content;
+  index:number;
   //button 是否可用
   btn = {
     machine: false,
     problemDomain: false,
     interfaceLine: false,
     requirement: false,
-    inferenceLine: false,
+    referenceLine: false,
     constraint: false
   }
   isContextCompleted = false;
@@ -253,7 +365,7 @@ export default class App extends Vue {
     desc: ""
   };
 
-  type = [
+  Types = [
     {
       value: "Event"
     },
@@ -300,7 +412,8 @@ export default class App extends Vue {
 
   rEditor = {
     dlgVisible: false,
-    desc: ""
+    desc: "",
+    sN: ""
   };
 
   interfaceEditor = {
@@ -313,6 +426,8 @@ export default class App extends Vue {
     pheList: []
   };
 
+  options1 = [];
+
   referenceEditor = {
     name: "",
     dlgVisible: false,
@@ -324,6 +439,8 @@ export default class App extends Vue {
     pheList: []
   };
 
+  options2 = [];
+
   constraintEditor = {
     name: "",
     dlgVisible: false,
@@ -334,6 +451,8 @@ export default class App extends Vue {
     constraint: false,
     pheList: []
   };
+
+  options3 = [];
 
   setTool1(){
     this.tool_num = 1;
@@ -371,26 +490,410 @@ export default class App extends Vue {
     this.diagram.createCanvas();
     this.dlgNew.desc = "";
     this.canvas = new fabric.Canvas("canvas");
-    var func = function (options) {
+    let func = function (options) {
       console.log(this.tool_num);
-      switch(this.tool_num){
-        case 0 : return;
-        case 1 : this.addMachine(options.e.offsetX, options.e.offsetY); break;
-        case 2 : this.addProblemDomain(options.e.offsetX, options.e.offsetY); break;
+      let x = options.e.offsetX;
+      let y = options.e.offsetY;
+      // console.log(x, y);
+      // console.log("click");
+      if(this.tool_num === 0){
+        return;
+      }else if(this.tool_num === 1){
+        this.addMachine(x, y);
+        this.tool_num = 0;
+      }else if(this.tool_num === 2){
+        this.addProblemDomain(x, y)
+        this.tool_num = 0;
+      }else if(this.tool_num === 3){
+        if(this.btn.interfaceLine) {
+          let flag = 0;
+          let data = this.canvasObj.componentList;
+          for (let i = 0; i < data.length; i++) {
+            if (data[i] instanceof Machine) {
+              if (x >= data[i].left && x <= (data[i].left + data[i].width) && y >= data[i].top && y <= (data[i].height + data[i].top)) {
+                this.src = data[i];
+                flag = 1;
+                break;
+              }
+            } else if (data[i] instanceof ProblemDomain) {
+              if (x >= data[i].left && x <= (data[i].left + data[i].width) && y >= data[i].top && y <= (data[i].height + data[i].top)) {
+                this.src = data[i];
+                flag = 1;
+                break;
+              }
+            }
+          }
+          if (flag == 0) {
+            this.tool_num = 0;
+            return;
+          }
+          this.tool_num = 31;
+          // console.log(1111111);
+        }
+      }else if(this.tool_num === 31){
+        let flag = 0;
+        let data = this.canvasObj.componentList;
+        for (let i = 0; i < data.length; i++) {
+          if (data[i] instanceof Machine) {
+            if (x >= data[i].left && x <= (data[i].left + data[i].width) && y >= data[i].top && y <= (data[i].height + data[i].top) && this.src != data[i]) {
+              this.des = data[i];
+              flag = 1;
+              break;
+            }
+          } else if (data[i] instanceof ProblemDomain) {
+            if (x >= data[i].left && x <= (data[i].left + data[i].width) && y >= data[i].top && y <= (data[i].height + data[i].top) && this.src != data[i]) {
+              this.des= data[i];
+              flag = 1;
+              break;
+            }
+          }
+        }
+        if (flag == 0) {
+          this.tool_num = 0;
+          this.src = undefined;
+          return;
+        }
+        let interfaceLine = new InterfaceLine();
+        interfaceLine.src = this.src;
+        interfaceLine.des = this.des;
+        interfaceLine.name = "a";
+        interfaceLine.init = interfaceLine.src.shortName;
+        interfaceLine.rec = interfaceLine.des.shortName;
+        // console.log(interfaceLine.init, interfaceLine.rec);
+        interfaceLine.draw(this.canvas);
+        this.canvasObj.addComponent(interfaceLine);
+        this.tool_num = 0;
+      }else if(this.tool_num === 4 ){
+        this.addRequirement(x, y);
+        this.tool_num = 0;
+      }else if(this.tool_num === 5){
+        if(this.btn.referenceLine) {
+          let flag = 0;
+          let data = this.canvasObj.componentList;
+          for (let i = 0; i < data.length; i++) {
+            // if (data[i] instanceof Requirement) {
+            //   if (x >= data[i].left && x <= (data[i].left + data[i].width) && y >= data[i].top && y <= (data[i].height + data[i].top)) {
+            //     this.src = data[i];
+            //     flag = 1;
+            //     break;
+            //   }
+            // } else
+            if (data[i] instanceof ProblemDomain) {
+              if (x >= data[i].left && x <= (data[i].left + data[i].width) && y >= data[i].top && y <= (data[i].height + data[i].top)) {
+                this.src = data[i];
+                flag = 1;
+                break;
+              }
+            }
+          }
+          if (flag == 0) {
+            this.tool_num = 0;
+            return;
+          }
+          this.tool_num = 51;
+        }
+      }else if(this.tool_num === 51){
+        let flag = 0;
+        let data = this.canvasObj.componentList;
+        for (let i = 0; i < data.length; i++) {
+          if (data[i] instanceof Requirement) {
+            if (x >= data[i].left && x <= (data[i].left + data[i].width) && y >= data[i].top && y <= (data[i].height + data[i].top) && this.src != data[i]) {
+              this.des = data[i];
+              flag = 1;
+              break;
+            }
+          }
+          // else if (data[i] instanceof ProblemDomain) {
+          //   if (x >= data[i].left && x <= (data[i].left + data[i].width) && y >= data[i].top && y <= (data[i].height + data[i].top) && this.src != data[i]) {
+          //     this.des = data[i];
+          //     flag = 1;
+          //     break;
+          //   }
+          // }
+        }
+        if (flag == 0) {
+          this.tool_num = 0;
+          this.src = undefined;
+          return;
+        }
 
-        case 4 : this.addRequirement(options.e.offsetX, options.e.offsetY); break;
+        let referenceLine = new ReferenceLine();
+        referenceLine.src = this.src;
+        referenceLine.des = this.des;
+        referenceLine.init = referenceLine.src.shortName;
+        referenceLine.rec = referenceLine.des.shortName;
+        referenceLine.name = "b";
+        referenceLine.cons = false;
+        referenceLine.draw(this.canvas);
+        this.canvasObj.addComponent(referenceLine);
+        this.tool_num = 0;
+      } else if (this.tool_num === 6){
+        if(this.btn.constraint) {
+          let flag = 0;
+          let data = this.canvasObj.componentList;
+          for (let i = 0; i < data.length; i++) {
+            if (data[i] instanceof Requirement) {
+              if (x >= data[i].left && x <= (data[i].left + data[i].width) && y >= data[i].top && y <= (data[i].height + data[i].top)) {
+                this.src = data[i];
+                flag = 1;
+                break;
+              }
+            }
+          }
+          if (flag == 0) {
+            this.tool_num = 0;
+            return;
+          }
+          this.tool_num = 61;
+        }
+      }else if(this.tool_num === 61) {
+        let flag = 0;
+        let data = this.canvasObj.componentList
+        for (let i = 0; i < data.length; i++) {
+
+          if (data[i] instanceof ProblemDomain) {
+            if (x >= data[i].left && x <= (data[i].left + data[i].width) && y >= data[i].top && y <= (data[i].height + data[i].top)) {
+              this.des = data[i];
+              flag = 1;
+              break;
+            }
+          }
+        }
+        if (flag == 0) {
+          this.tool_num = 0;
+          this.src = undefined;
+          return;
+        }
+        let constraintLine = new ConstraintLine();
+        constraintLine.src = this.src;
+        constraintLine.des = this.des;
+        constraintLine.init = constraintLine.src.shortName;
+        constraintLine.rec = constraintLine.des.shortName;
+        constraintLine.name = "c";
+        constraintLine.cons = false;
+        constraintLine.draw(this.canvas);
+        this.canvasObj.addComponent(constraintLine);
+        this.tool_num = 0;
       }
-      this.tool_num = 0;
     }.bind(this);
-
     this.canvas.on('mouse:down', func);
+    this.canvasObj = new Canvas();
+    let func2 = function (options) {
+      let x = options.e.offsetX;
+      let y = options.e.offsetY;
+      console.log(x, y);
+      // console.log("dblclick");
+      let data = this.canvasObj.componentList;
+      let flag = 0;
+      for(let i = 0; i < data.length; i++){
+        if (data[i] instanceof Requirement) {
+          if (x >= data[i].left && x <= (data[i].left + data[i].width) && y >= data[i].top && y <= (data[i].height + data[i].top)) {
+            //_this.index = i
+            this.content = data[i]
+            this.rEditor.desc = data[i].description;
+            this.rEditor.sN = data[i].shortName;
+            this.rEditor.dlgVisible = true;
+            flag = 1;
+            break;
+          }
+        } else if (data[i] instanceof ProblemDomain) {
+          if (x >= data[i].left && x <= (data[i].left + data[i].width) && y >= data[i].top && y <= (data[i].height + data[i].top)) {
+            //_this.index = i
+            this.content = data[i]
+            this.pDEditor.desc = data[i].description;
+            this.pDEditor.sN = data[i].shortName;
+            this.pDEditor.dlgVisible = true;
+            flag = 1;
+            break;
+          }
+        } else if (data[i] instanceof Machine) {
+          if (x >= data[i].left && x <= (data[i].left + data[i].width) && y >= data[i].top && y <= (data[i].height + data[i].top)) {
+            //_this.index = i
+            this.content = data[i]
+            this.mEditor.desc = data[i].description;
+            this.mEditor.sN = data[i].shortName;
+            this.mEditor.dlgVisible = true;
+            flag = 1;
+            break;
+          }
+        } else if (data[i] instanceof InterfaceLine) {
+          let a = data[i].x1;
+          let b = data[i].y1;
+          let c = data[i].x2;
+          let d = data[i].y2;
+          let k = (d - b) / (c - a);
+          let m = b - k * a;
+          let Y = k * x + m;
+          console.log(y, Y);
+          if (a > c){
+            let p = a;
+            a = c;
+            c = p;
+          }
+          this.interfaceEditor.name = data[i].name;
+          this.options1 = [];
+          this.options1.push({
+            value: data[i].src.shortName,
+            label: data[i].src.shortName
+          })
+          this.options1.push({
+            value: data[i].des.shortName,
+            label: data[i].des.shortName
+          })
+          this.interfaceEditor.initiator = data[i].init;
+          this.interfaceEditor.receiver = data[i].rec;
+          this.interfaceEditor.type = data[i].type;
+          if (data[i].phe !== '') {
+            this.interfaceEditor.phe = data[i].phe;
+          } else {
+            this.interfaceEditor.phe = '';
+          }
+          if (data[i].pheList.length !== 0) {
+            this.interfaceEditor.pheList = data[i].pheList;
+          } else {
+            this.interfaceEditor.pheList = [];
+          }
+          if (y - Y <= 10 && Y - y <= 10 && x >= a && x <= c) {
+            this.content = data[i];
+            this.interfaceEditor.dlgVisible = true;
+            flag = 2;
+            break;
+          }
+        } else if (data[i] instanceof ReferenceLine) {
+          let a = data[i].x1;
+          let b = data[i].y1;
+          let c = data[i].x2;
+          let d = data[i].y2;
+          let k = (d - b) / (c - a);
+          let m = b - k * a;
+          let Y = k * x + m;
+          console.log(y, Y);
+          if (a > c){
+            let p = a;
+            a = c;
+            c = p;
+          }
+          this.referenceEditor.name = data[i].name;
+          this.options2 = [];
+          this.options2.push({
+            value: data[i].src.shortName,
+            label: data[i].src.shortName
+          })
+          this.options2.push({
+            value: data[i].des.shortName,
+            label: data[i].des.shortName
+          })
+          this.referenceEditor.initiator = data[i].init;
+          this.referenceEditor.receiver = data[i].rec;
+          this.referenceEditor.type = data[i].type;
+          this.referenceEditor.constraint = data[i].cons;
+          if (data[i].phe !== '') {
+            this.referenceEditor.phe = data[i].phe;
+          } else {
+            this.referenceEditor.phe = '';
+          }
+          if (data[i].pheList.length !== 0) {
+            this.referenceEditor.pheList = data[i].pheList;
+          } else {
+            this.referenceEditor.pheList = [];
+          }
+          if (y - Y <= 10 && Y - y <= 10 && x >= a && x <= c) {
+            this.content = data[i];
+            this.referenceEditor.dlgVisible = true;
+            flag = 2;
+            break;
+          }
+        } else if (data[i] instanceof ConstraintLine) {
+          let a = data[i].x1;
+          let b = data[i].y1;
+          let c = data[i].x2;
+          let d = data[i].y2;
+          let k = (d - b) / (c - a);
+          let m = b - k * a;
+          let Y = k * x + m;
+          // console.log(y, Y);
+          if (a > c){
+            let p = a;
+            a = c;
+            c = p;
+          }
+          this.constraintEditor.name = data[i].name;
+          this.options3 = [];
+          this.options3.push({
+            value: data[i].src.shortName,
+            label: data[i].src.shortName
+          })
+          this.options3.push({
+            value: data[i].des.shortName,
+            label: data[i].des.shortName
+          })
+          this.constraintEditor.initiator = data[i].init;
+          this.constraintEditor.receiver = data[i].rec;
+          this.constraintEditor.type = data[i].type;
+          this.constraintEditor.constraint = data[i].cons;
+          if (data[i].phe !== '') {
+            this.constraintEditor.phe = data[i].phe;
+          } else {
+            this.constraintEditor.phe = '';
+          }
+          if (data[i].pheList.length !== 0) {
+            this.constraintEditor.pheList = data[i].pheList;
+          } else {
+            this.constraintEditor.pheList = [];
+          }
+          if (y - Y <= 10 && Y - y <= 10 && x >= a && x <= c) {
+            this.content = data[i];
+            this.constraintEditor.dlgVisible = true;
+            console.log(this.content.left, this.content.top);
+            console.log(this.content.x1>this.content.x2? this.content.x2: this.content.x1);
+            flag = 2;
+            break;
+          }
+        }
+      }
+      let cb = this.canvas.getObjects();
+      console.log(cb);
+      if (flag === 1) {
+        for (let i = 0; i < cb.length; i++) {
+          let f = cb[i].getObjects()[0];
+          if ((f instanceof fabric.Rect || f instanceof fabric.Ellipse) && cb[i].left === this.content.left && cb[i].top === this.content.top) {
+            this.index = i;
+            console.log("i:", i);
+          }
+        }
+      }else if (flag === 2) {
+        for (let i = 0; i < cb.length; i++) {
+          let l = cb[i].getObjects()[0];
+          if ((l instanceof fabric.Line || fabric.Path) && l.x1 === this.content.x1 && l.y1 === this.content.y1 && l.x2 === this.content.x2 && l.y2 === this.content.y2) {
+            this.index = i;
+            console.log("i:", i);
+          }
+          // if ((l instanceof fabric.Path) ) {
+          //   console.log(this.content.left, this.content.top);
+          //   console.log(this.content.x1, this.content.x2);
+          //   console.log(this.content.y1, this.content.y2);
+          //   // l.left === ((this.content.x1 <= this.content.x2)? this.content.x1: this.content.x2);
+          //   console.log("l.left",l.left);
+          //   console.log("l.top", l.top);
+          //
+          //   // this.index = i;
+          //   // console.log("i:", i);
+          // }
+        }
+      }
+
+
+
+    }.bind(this);
+    this.canvas.on("mouse:dblclick", func2);
   }
 
   addMachine( x, y) {
     if(this.btn.machine){
       if (!this.machineDisabled) {
         this.machine = new Machine(x, y);
-        this.machine.draw(this.canvas);
+        this.machine.draw(this.canvas, this.canvasObj);
+        this.canvasObj.addComponent(this.machine);
         this.machineDisabled = true;
       }
     }
@@ -400,43 +903,22 @@ export default class App extends Vue {
 
       let pD = new ProblemDomain(x, y);
       this.problemDomains.push(pD);
-      pD.draw(this.canvas);
+      pD.draw(this.canvas, this.canvasObj);
+      this.canvasObj.addComponent(pD);
     }
   }
   addRequirement(x ,y) {
     if(this.btn.requirement){
       if (!this.requirementDisabled) {
         let rqm = new Requirement(x ,y);
-        rqm.draw(this.canvas);
+        rqm.draw(this.canvas, this.canvasObj);
+        this.canvasObj.addComponent(rqm);
         this.requirementDisabled = true;
       }
     }
   }
 
-
-  //add Line
-  addInterfaceLine(){
-    if(this.btn.interfaceLine){
-      alert(3)
-    }
-  }
-  addInference(){
-    if(this.btn.inferenceLine){
-      alert(6)
-    }
-  }
-  addConstraint(){
-    if(this.btn.constraint){
-      alert(6)
-    }
-  }
-
-
   // Machine Editor Editor
-  openMEditor() {
-    //dblclick open
-    this.mEditor.dlgVisible = true;
-  }
   closeMEditor() {
     //cancel
     this.mEditor.dlgVisible = false;
@@ -445,27 +927,31 @@ export default class App extends Vue {
   }
   closeMEditorAndSave() {
     //comfirm
+
+    // this.machine.description = this.mEditor.desc;
+    // this.machine.shortName = this.mEditor.sN;
+    let data = this.canvas.getObjects();
+    this.canvas.remove(data[this.index]);
+    this.content.description = this.mEditor.desc;
+    this.content.shortName = this.mEditor.sN;
+    this.content.draw(this.canvas,this.canvasObj);
     this.mEditor.dlgVisible = false;
-    this.machine.description = this.mEditor.desc;
-    this.machine.shortName = this.mEditor.sN;
   }
 
   //Problem Domain Editor
-  openPDEditor() {
-    this.pDEditor.dlgVisible = true;
-  }
   closePDEditor() {
     this.pDEditor.dlgVisible = false;
   }
   closePDEditorAndSave() {
+    let data = this.canvas.getObjects();
+    this.canvas.remove(data[this.index]);
+    this.content.description = this.pDEditor.desc;
+    this.content.shortName = this.pDEditor.sN;
+    this.content.draw(this.canvas,this.canvasObj);
     this.pDEditor.dlgVisible = false;
   }
 
   //Requirement Editor
-  openREditor() {
-    // dblclick requirement
-    this.rEditor.dlgVisible = true;
-  }
   closeREditor() {
     //cancel
     this.rEditor.dlgVisible = false;
@@ -473,28 +959,104 @@ export default class App extends Vue {
   }
   closeREditorAndSave() {
     //comfirm
+    let data = this.canvas.getObjects();
+    this.canvas.remove(data[this.index]);
+    this.content.description = this.rEditor.desc;
+    this.content.shortName = this.rEditor.sN;
+    this.content.draw(this.canvas,this.canvasObj);
     this.rEditor.dlgVisible = false;
   }
 
 
   //interface Editor
-  openInterfaceEditor() {
-    this.interfaceEditor.dlgVisible = true;
-  }
   closeInterfaceEditor() {
     this.interfaceEditor.dlgVisible = false;
   }
+  closeInterfaceAndSave(){
+    let data = this.canvas.getObjects();
+    this.canvas.remove(data[this.index]);
+    //console.log(this.interaction)
+    this.content.name = this.interfaceEditor.name;
+    this.content.init = this.interfaceEditor.initiator;
+    this.content.rec = this.interfaceEditor.receiver;
+    this.content.phe = this.interfaceEditor.phe;
+    this.content.type = this.interfaceEditor.type;
+    this.content.pheList = this.interfaceEditor.pheList;
+    //console.log(this.canvas)
+    //console.log(this.canvasObject);
+    this.content.draw(this.canvas);
+    this.interfaceEditor.dlgVisible = false;
+
+  }
+  add1(){
+    if(this.interfaceEditor.phe !== null){
+      // console.log('xxxx')
+      this.interfaceEditor.pheList.push(this.interfaceEditor.initiator+'! ' +this.interfaceEditor.phe+' '+this.interfaceEditor.type);
+    }
+  }
 
   // reference Editor
+  openReferenceEditor(){
+    this.referenceEditor.dlgVisible = true;
+  }
+  closeReferenceEditor(){
+    this.referenceEditor.dlgVisible = false;
+  }
+  closeReferenceAndSave(){
+    let data = this.canvas.getObjects();
+    console.log("index:",this.index);
+    this.canvas.remove(data[this.index]);
+    this.content.name = this.referenceEditor.name;
+    this.content.init = this.referenceEditor.initiator;
+    this.content.rec = this.referenceEditor.receiver;
+    this.content.phe = this.referenceEditor.phe;
+    this.content.type = this.referenceEditor.type;
+    this.content.cons = this.referenceEditor.constraint;
+    this.content.pheList = this.referenceEditor.pheList;
+    // console.log(this.content)
+    this.content.draw(this.canvas);
+    this.referenceEditor.dlgVisible = false;
+  }
+  add2() {
+    if(this.referenceEditor.phe !== null){
+      this.referenceEditor.pheList.push(this.referenceEditor.initiator+'! '+this.referenceEditor.phe+' '+this.referenceEditor.type)
+    }
+  }
 
   // constraint Editor
+  openConstraintEditor(){
+    this.constraintEditor.dlgVisible = true;
+  }
+  closeConstraintEditor(){
+    this.constraintEditor.dlgVisible = false;
+  }
+  closeConstraintAndSave(){
+    let data = this.canvas.getObjects();
+    // console.log("index:",this.index)
+    this.canvas.remove(data[this.index]);
+    this.content.name = this.constraintEditor.name;
+    this.content.init = this.constraintEditor.initiator;
+    this.content.rec = this.constraintEditor.receiver;
+    this.content.phe = this.constraintEditor.phe;
+    this.content.type = this.constraintEditor.type;
+    this.content.cons = this.constraintEditor.constraint;
+    this.content.pheList = this.constraintEditor.pheList;
+    // console.log(this.content)
+    this.content.draw(this.canvas);
+    this.constraintEditor.dlgVisible = false;
+  }
+  add3() {
+    if(this.constraintEditor.phe !== null){
+      this.constraintEditor.pheList.push(this.constraintEditor.receiver+'! '+this.constraintEditor.phe+' '+this.constraintEditor.type)
+    }
+  }
 
 
   stepBack() {
     if (this.step_active > -1) {
       switch(this.step_active){
-        case 6: this.btn.constraint = true; this.btn.inferenceLine = true; break;
-        case 5: this.btn.constraint = false; this.btn.inferenceLine = false; this.btn.requirement = true; break;
+        case 6: this.btn.constraint = true; this.btn.referenceLine = true; break;
+        case 5: this.btn.constraint = false; this.btn.referenceLine = false; this.btn.requirement = true; break;
         case 4: this.btn.requirement = false; break;
         case 3: this.btn.interfaceLine = true; break;
         case 2: this.btn.interfaceLine = false; this.btn.problemDomain = true; break;
@@ -517,18 +1079,95 @@ export default class App extends Vue {
       this.step_active++;
       switch (this.step_active) {
         case 4: this.btn.interfaceLine = false; this.btn.requirement = true; break;
-        case 5: this.btn.requirement = false; this.btn.constraint = true; this.btn.inferenceLine = true; break;
-        case 6: this.btn.constraint = false; this.btn.inferenceLine = false; this.checkProblem(); break;
+        case 5: this.btn.requirement = false; this.btn.constraint = true; this.btn.referenceLine = true; break;
+        case 6: this.btn.constraint = false; this.btn.referenceLine = false; this.checkProblem(); break;
       }
 
     }
   }
 
   checkContext(){
-    this.isContextCompleted = true;
+
+    let mNum = 0
+    if (!this.canvas) {
+      return;
+    }
+    let data = this.canvasObj.componentList;
+    console.log(data);
+    let flag = 1;
+    for (let i = 0; i < data.length; i++) {
+      if (data[i] instanceof InterfaceLine) {
+        if (data[i].phe === ''){
+          flag = 0;
+        }
+        if (data[i].pheList.length === 0) {
+          flag = 0;
+        }
+      }
+      if (data[i] instanceof Machine) {
+        mNum++;
+        if (mNum > 1 || data[i].has === false){
+          flag = 0;
+        }
+      }
+      if (data[i] instanceof ProblemDomain) {
+        if (data[i].has === false){
+          flag = 0;
+        }
+      }
+    }
+    if (flag === 1 && data) {
+      this.isContextCompleted = true;
+      alert("context Diagram is correct!");
+    }
+    else {
+      this.isContextCompleted = false;
+      this.step_active--;
+      alert("context Diagram is incorrect! Pleade check it.")
+    }
   }
   checkProblem(){
+    if (!this.canvas) {
+      return;
+    }
+    let data = this.canvasObj.componentList;
+    console.log(data)
+    let flag = 1;
+    let rNum = 0;
+    let iNum = 0;
 
+    for (let i = 0; i < data.length; i++) {
+      if (data[i] instanceof ReferenceLine) {
+        if (data[i].phe === ''){
+          flag = 0;
+        }
+        if (data[i].pheList.length === 0) {
+          flag = 0;
+        }
+      }
+      if (data[i] instanceof ConstraintLine) {
+        iNum++;
+        if (data[i].phe === ''){
+          flag = 0;
+        }
+        if (data[i].pheList.length === 0) {
+          flag = 0;
+        }
+      }
+      if (data[i] instanceof Requirement) {
+        rNum++;
+        if (rNum > 1){
+          flag = 0;
+        }
+      }
+    }
+    if (flag === 1 && data && iNum >= 1) {
+      alert("Problem Diagram is correct!");
+    }
+    else {
+      // this.step_active = 5;
+      alert("Problem Diagram is incorrect! Pleasee check it.");
+    }
   }
 }
 
@@ -547,12 +1186,44 @@ class Diagram {
   }
 }
 
-class CanvasComponent {
+class Canvas {
+  componentList=[];
 
+  draw(canvas)
+  {
+    let c = canvas.getObjects();
+    for(let i=0;i<c.length;i++)
+    {
+      let g = c[i].getObjects();
+      if(g[0] instanceof fabric.Line || g[0] instanceof fabric.Path)
+      {
+        canvas.remove(c[i]);
+        canvas.renderAll();
+      }
+    }
+    for(let i=0;i<this.componentList.length;i++)
+    {
+      if(this.componentList[i] instanceof Line)
+      {
+        //console.log("line");
+        this.componentList[i].draw(canvas);
+      }
+    }
+  }
+  addComponent(component){
+    this.componentList.push(component);
+  }
+
+}
+
+class CanvasComponent {
+  draw(canvas, canvasObj?){}
 }
 
 class Shape extends CanvasComponent {
   public description: string = "";
+  public width = 150;
+  public height = 70;
 
   constructor() {
     super();
@@ -565,8 +1236,8 @@ class Machine extends Shape {
   public  machine: fabric.Group;
   public left: number;
   public top: number;
-  public width: number = 0;
-  public height: number = 0;
+  // public width: number = 0;
+  // public height: number = 0;
 
 
   constructor(x, y) {
@@ -581,8 +1252,8 @@ class Machine extends Shape {
   createGroup() {
     let rect = new fabric.Rect({
       fill: "#ccc",
-      width: 150,
-      height: 70,
+      width: this.width,
+      height: this.height,
       strokeWidth: 3,
       stroke: "black"
     });
@@ -590,7 +1261,7 @@ class Machine extends Shape {
       fill: "#ccc",
       left: 10,
       width: 10,
-      height: 70,
+      height: this.height,
       strokeWidth: 3,
       stroke: "black"
     })
@@ -606,17 +1277,19 @@ class Machine extends Shape {
       top: this.top,
       left:this.left
     });
+  }
+
+  draw(canvas, canvasObject) {
+    this.createGroup();
+    canvas.add(this.machine);
     let func = function () {
       this.left = this.machine.left;
       this.top = this.machine.top;
+      canvasObject.draw(canvas);
       // console.log(this.left, this.top);
     }.bind(this);
     this.machine.on("moving", func);
-
-  }
-  draw(canvas) {
-    this.createGroup();
-    canvas.add(this.machine);
+    this.machine.bringToFront();
     canvas.renderAll();
   }
 }
@@ -650,8 +1323,8 @@ class ProblemDomain extends Shape {
   createGroup() {
     let rect = new fabric.Rect({
       fill: "#ccc",
-      width: 150,
-      height: 70,
+      width: this.width,
+      height: this.height,
       strokeWidth: 3,
       stroke: "black"
     });
@@ -675,23 +1348,27 @@ class ProblemDomain extends Shape {
       top: this.top,
       left:this.left
     });
+
+  }
+
+  draw(canvas, canvasObject) {
+    this.createGroup();
+    canvas.add(this.problemDomain);
     let func = function () {
       this.left = this.problemDomain.left;
       this.top = this.problemDomain.top;
+      canvasObject.draw(canvas);
       // console.log(this.left, this.top);
     }.bind(this);
     this.problemDomain.on("moving", func);
-  }
-
-  draw(canvas) {
-    this.createGroup();
-    canvas.add(this.problemDomain);
+    this.problemDomain.bringToFront();
     canvas.renderAll();
   }
 }
 
 class Requirement extends Shape {
   public description = "Requirement";
+  public shortName = "R";
   public left = 0;
   public top = 0;
   requirement :fabric.Group;
@@ -709,8 +1386,8 @@ class Requirement extends Shape {
       fill: "#ccc",
       originX: "center",
       originY: "center",
-      rx: 75,
-      ry: 35,
+      rx: this.width/2,
+      ry: this.height/2,
       strokeDashArray: [5, 5],
       strokeWidth: 6,
       stroke: "black"
@@ -726,18 +1403,21 @@ class Requirement extends Shape {
       top: this.top,
       left: this.left
     });
+
+  }
+
+  // 18px的字宽为13
+  draw(canvas, canvasObject) {
+    this.createGroup();
+    canvas.add(this.requirement);
     let func = function () {
       this.left = this.requirement.left;
       this.top = this.requirement.top;
       // console.log(this.left, this.top);
+      canvasObject.draw(canvas);
     }.bind(this);
     this.requirement.on("moving", func);
-  }
-
-  // 18px的字宽为13
-  draw(canvas) {
-    this.createGroup();
-    canvas.add(this.requirement);
+    this.requirement.bringToFront();
     canvas.renderAll();
   }
 }
@@ -770,10 +1450,10 @@ function drawArrowBase (fromX, fromY, toX, toY, theta, headlen) {
 class Line extends CanvasComponent {
   public src;
   public des;
-  public init;
-  public rec;
+  public init = "";
+  public rec = "";
   public typeName = "Event";
-  public phe;
+  public phe ="";
   public pheList = [];
   public x1 = 0;
   public y1 = 0;
@@ -800,7 +1480,7 @@ class InterfaceLine extends Line {
       selectable:false,
     });
     let text = new fabric.Text(this.name,{
-      fontSize: 16,
+      fontSize: 28,
       left: (x1+x2)/2,
       top: (y1+y2)/2,
       originX: 'center',
@@ -808,7 +1488,6 @@ class InterfaceLine extends Line {
       //preserveObjectStacking:true,
     });
     let group = new fabric.Group([line, text], {
-      //preserveObjectStacking:true,
       selectable: false
     });
     canvas.add(group);
@@ -841,7 +1520,7 @@ class ReferenceLine extends Line {
       strokeDashArray:[10,5],
     });
     let text = new fabric.Text(this.name,{
-      fontSize: 16,
+      fontSize: 28,
       left: (x1+x2)/2,
       top: (y1+y2)/2,
       originX: 'center',
@@ -860,6 +1539,8 @@ class ReferenceLine extends Line {
 
 class ConstraintLine extends Line {
   public cons = false;
+  public top = 0;
+  public left = 0;
 
   draw(canvas)
   {
@@ -875,22 +1556,26 @@ class ConstraintLine extends Line {
     this.y1 = y1;
     this.x2 = x2;
     this.y2 = y2;
+    this.left =  (x1<=x2)?x1:x2;
+    this.top = (y1<=y2)?y1:y2;
     let theta = 20;
     let healen = 20;
+    // @ts-ignore
     let line = new fabric.Path(drawArrowBase(x1,y1,x2,y2,theta,healen),{
       fill:"black",
       stroke:"black",
       strokeWidth:2,
+      x1:this.x1,
+      x2:this.x2,
+      y1:this.y1,
+      y2:this.y2,
       //preserveObjectStacking:true,
       selectable:false,
       strokeDashArray:[10,5],
-      // x1:x1,
-      // y1:y1,
-      // x2:x2,
-      // y2:y2,
     });
+
     let text = new fabric.Text(this.name,{
-      fontSize: 16,
+      fontSize: 28,
       left: (x1+x2)/2,
       top: (y1+y2)/2,
       originX: 'center',
@@ -901,6 +1586,7 @@ class ConstraintLine extends Line {
       //preserveObjectStacking:true,
       selectable: false
     });
+
     canvas.add(group);
     group.sendToBack();
     canvas.renderAll();
