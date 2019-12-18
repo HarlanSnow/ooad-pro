@@ -324,7 +324,7 @@
 import { Vue, Component } from "vue-property-decorator";
 import $ from "jquery";
 import { fabric } from "fabric";
-// import Hammer from "hammerjs";
+
 
 
 @Component({
@@ -393,7 +393,7 @@ export default class App extends Vue {
         value: "GivenDomain"
       },
       {
-        value: "DesignDomian"
+        value: "DesignDomain"
       }
     ],
     dT: "",
@@ -648,7 +648,7 @@ export default class App extends Vue {
         }
       }else if(this.tool_num === 61) {
         let flag = 0;
-        let data = this.canvasObj.componentList
+        let data = this.canvasObj.componentList;
         for (let i = 0; i < data.length; i++) {
 
           if (data[i] instanceof ProblemDomain) {
@@ -678,6 +678,7 @@ export default class App extends Vue {
     }.bind(this);
     this.canvas.on('mouse:down', func);
     this.canvasObj = new Canvas();
+
     let func2 = function (options) {
       let x = options.e.offsetX;
       let y = options.e.offsetY;
@@ -881,9 +882,6 @@ export default class App extends Vue {
           // }
         }
       }
-
-
-
     }.bind(this);
     this.canvas.on("mouse:dblclick", func2);
   }
@@ -947,7 +945,9 @@ export default class App extends Vue {
     this.canvas.remove(data[this.index]);
     this.content.description = this.pDEditor.desc;
     this.content.shortName = this.pDEditor.sN;
-    this.content.draw(this.canvas,this.canvasObj);
+    this.content.physicalPropety = this.pDEditor.pp;
+    this.content.domainType = this.pDEditor.dT;
+    this.content.draw(this.canvas, this.canvasObj);
     this.pDEditor.dlgVisible = false;
   }
 
@@ -1088,7 +1088,7 @@ export default class App extends Vue {
 
   checkContext(){
 
-    let mNum = 0
+    let mNum = 0;
     if (!this.canvas) {
       return;
     }
@@ -1106,9 +1106,6 @@ export default class App extends Vue {
       }
       if (data[i] instanceof Machine) {
         mNum++;
-        if (mNum > 1 || data[i].has === false){
-          flag = 0;
-        }
       }
       if (data[i] instanceof ProblemDomain) {
         if (data[i].has === false){
@@ -1116,14 +1113,14 @@ export default class App extends Vue {
         }
       }
     }
-    if (flag === 1 && data) {
+    if (flag === 1 && data && mNum === 1) {
       this.isContextCompleted = true;
       alert("context Diagram is correct!");
     }
     else {
       this.isContextCompleted = false;
       this.step_active--;
-      alert("context Diagram is incorrect! Pleade check it.")
+      alert("context Diagram is incorrect! Please check it.")
     }
   }
   checkProblem(){
@@ -1297,11 +1294,12 @@ class Machine extends Shape {
 class ProblemDomain extends Shape {
   public description: string = "ProblemDomain";
   public shortName: string = "PD";
-  public physicalPropety: string;
+  public physicalPropety: string = "GivenDomain";
   public domainType: string;
   public left;
   public top;
   public problemDomain: fabric.Group;
+  public mark:string;
 
   constructor(x, y) {
     super();
@@ -1321,6 +1319,12 @@ class ProblemDomain extends Shape {
     this.domainType = domainType;
   }
   createGroup() {
+    switch(this.domainType){
+      case "Causal": this.mark = "C";break;
+      case "Biddable": this.mark = "B";break;
+      case "Lexical": this.mark = "X";break;
+      default: this.mark = "";
+    }
     let rect = new fabric.Rect({
       fill: "#ccc",
       width: this.width,
@@ -1328,14 +1332,14 @@ class ProblemDomain extends Shape {
       strokeWidth: 3,
       stroke: "black"
     });
-    // let rect2 = new fabric.Rect({
-    //   fill: "#ccc",
-    //   left: 10,
-    //   width: 10,
-    //   height: 70,
-    //   strokeWidth: 3,
-    //   stroke: "black"
-    // })
+    let rect2 = new fabric.Rect({
+      fill: "#ccc",
+      left: 0,
+      width: 10,
+      height: this.height,
+      strokeWidth: 3,
+      stroke: "black"
+    });
     let text = new fabric.Text(this.description + "\n(" + this.shortName +")",{
       fontSize: 16,
       top: 20,
@@ -1343,11 +1347,26 @@ class ProblemDomain extends Shape {
       fill: "black",
       strokeWidth: 2,
       textAlign: "center"
-    })
-    this.problemDomain = new fabric.Group([rect,text],{
-      top: this.top,
-      left:this.left
     });
+    let text2 = new fabric.Text(this.mark, {
+      fontSize: 16,
+      strokeWidth: 3,
+      fill: "black",
+      top: this.height - 20,
+      left: this.width - 20
+    })
+
+    if(this.physicalPropety === "GivenDomain"){
+      this.problemDomain = new fabric.Group([rect,text, text2],{
+        top: this.top,
+        left:this.left
+      });
+    }else if(this.physicalPropety === "DesignDomain"){
+      this.problemDomain = new fabric.Group([rect,rect2,text, text2],{
+        top: this.top,
+        left:this.left
+      });
+    }
 
   }
 
@@ -1565,9 +1584,13 @@ class ConstraintLine extends Line {
       fill:"black",
       stroke:"black",
       strokeWidth:2,
+      // @ts-ignore
       x1:this.x1,
+      // @ts-ignore
       x2:this.x2,
+      // @ts-ignore
       y1:this.y1,
+      // @ts-ignore
       y2:this.y2,
       //preserveObjectStacking:true,
       selectable:false,
