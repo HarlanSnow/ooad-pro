@@ -911,7 +911,7 @@ export default class App extends Vue {
         let rqm = new Requirement(x ,y);
         rqm.draw(this.canvas, this.canvasObj);
         this.canvasObj.addComponent(rqm);
-        this.requirementDisabled = true;
+        // this.requirementDisabled = true;
       }
     }
   }
@@ -1153,12 +1153,12 @@ export default class App extends Vue {
       }
       if (data[i] instanceof Requirement) {
         rNum++;
-        if (rNum > 1){
-          flag = 0;
-        }
+        // if (rNum > 1){
+        //   flag = 0;
+        // }
       }
     }
-    if (flag === 1 && data && iNum >= 1) {
+    if (flag === 1 && data && iNum >= 1 && rNum >=1) {
       alert("Problem Diagram is correct!");
     }
     else {
