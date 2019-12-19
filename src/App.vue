@@ -869,17 +869,6 @@ export default class App extends Vue {
             this.index = i;
             console.log("i:", i);
           }
-          // if ((l instanceof fabric.Path) ) {
-          //   console.log(this.content.left, this.content.top);
-          //   console.log(this.content.x1, this.content.x2);
-          //   console.log(this.content.y1, this.content.y2);
-          //   // l.left === ((this.content.x1 <= this.content.x2)? this.content.x1: this.content.x2);
-          //   console.log("l.left",l.left);
-          //   console.log("l.top", l.top);
-          //
-          //   // this.index = i;
-          //   // console.log("i:", i);
-          // }
         }
       }
     }.bind(this);
